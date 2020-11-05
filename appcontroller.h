@@ -27,6 +27,9 @@ private:
     unsigned int source_dir_id_;
     unsigned int target_dir_id_;
     const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
+
+    void update_source_dir_label();
+
 };
 
 #endif // APPCONTROLLER_H

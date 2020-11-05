@@ -4,7 +4,7 @@
 
 AppController::AppController(QObject *parent) : QObject(parent)
 {
-    mainwindow_->Ui->setupUi(this);
+//    mainwindow_->Ui->setupUi(this);
     mainwindow_ = parent;
 
     Config config_;
@@ -24,9 +24,8 @@ AppController::AppController(QObject *parent) : QObject(parent)
         target_dir_id_ = dirs_.add_directory(std::filesystem::current_path());
 
 
-    mainwindow_->ui->lbl_target->setText("PLS");
+//    mainwindow_->ui->lbl_target->setText("PLS");
 
-    // now I think we've set up everything from a data lvl, so we can call the GUI to present itself like the cunt that she is
 
 //    QObject::connect(mainwindow_->ui->lbl_target
 //    QObject::connect(this->ui->BrowseInboundButton, &QPushButton::clicked,

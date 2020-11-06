@@ -12,6 +12,7 @@ SOURCES += \
     appcontroller.cpp \
     config.cpp \
     directories.cpp \
+    files.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -19,6 +20,7 @@ HEADERS += \
     appcontroller.h \
     config.h \
     directories.h \
+    files.h \
     mainwindow.h
 
 FORMS += \

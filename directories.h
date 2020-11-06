@@ -2,6 +2,7 @@
 #define DIRECTORY_H
 
 #include <QObject>
+#include <QStorageInfo>
 #include <filesystem>
 
 class Directories : public QObject
@@ -16,17 +17,22 @@ public:
     } metadata;
 
     typedef struct{
-        std::vector<unsigned long> sizes_total;
+        std::vector<QString> names;
         std::vector<unsigned long> sizes_free;
+        std::vector<unsigned long> sizes_total;
     } drives;
 
-
     Directories();
-    unsigned int add_directory(const std::string &path);
-    bool set_directory_path(const unsigned int &id, std::string &path);
+    unsigned int AddDirectory(const std::string &path);
+    bool SetDirectoryPath(const unsigned int &id, std::string &path);
 
-    void cout_all_drive_sizes();
+    std::string GetDirectoryPath(const unsigned int &id);
 
+    void PrintAllDrives();
+
+signals:
+    void DirectoryChanged(const unsigned int &id);
+    void DriveChanged(const unsigned int &id);
 
 private:
 
@@ -36,7 +42,7 @@ private:
     const float byte_tib_ = 0.0000000000009094947f;
     const float byte_gib_ = 0.0000000009313225728f;
 
-    unsigned int set_drive(const std::string &path);
+    unsigned int SetDrive(const std::string &path);
 
 };
 

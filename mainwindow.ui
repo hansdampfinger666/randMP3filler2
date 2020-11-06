@@ -19,7 +19,7 @@
      <rect>
       <x>80</x>
       <y>50</y>
-      <width>58</width>
+      <width>371</width>
       <height>18</height>
      </rect>
     </property>
@@ -27,12 +27,12 @@
      <string>TextLabel</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="lbl_target">
     <property name="geometry">
      <rect>
       <x>80</x>
       <y>90</y>
-      <width>58</width>
+      <width>401</width>
       <height>18</height>
      </rect>
     </property>
@@ -41,6 +41,7 @@
     </property>
    </widget>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -50,8 +51,14 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuPLs">
+    <property name="title">
+     <string>PLs</string>
+    </property>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menuPLs"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

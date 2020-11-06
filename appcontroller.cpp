@@ -2,36 +2,42 @@
 #include "ui_mainwindow.h"
 
 
-AppController::AppController(QObject *parent) : QObject(parent)
+AppController::AppController(MainWindow *mainwindow)
 {
-//    mainwindow_->Ui->setupUi(this);
-    mainwindow_ = parent;
+    mainwindow_ = mainwindow;
 
-    Config config_;
-    source_dir_param_id_ = config_.add_param(config_tokens_.at(0));
-    target_dir_param_id_ = config_.add_param(config_tokens_.at(1));
+    config_ = new Config();
+    source_dir_id_ = config_->AddParam(config_tokens_.at(0));
+    target_dir_id_ = config_->AddParam(config_tokens_.at(1));
 
-    if (!config_.read_config())
+    if (!config_->ReadConfig())
         std::cout << "Config could not be read" << std::endl;
 
-    Directories dirs_;
-    source_dir_id_ = dirs_.add_directory(config_.get_param(source_dir_id_));
-    target_dir_id_ = dirs_.add_directory(config_.get_param(target_dir_id_));
+    dirs_ = new Directories();
+
+    QObject::connect(dirs_, &Directories::DirectoryChanged,
+                     this, &AppController::DirectoryChanged);
+
+    source_dir_id_ = dirs_->AddDirectory(config_->GetParam(source_dir_id_));
+    target_dir_id_ = dirs_->AddDirectory(config_->GetParam(target_dir_id_));
 
     if(source_dir_id_ == -1u)
-        source_dir_id_ = dirs_.add_directory(std::filesystem::current_path());
+        source_dir_id_ = dirs_->AddDirectory(std::filesystem::current_path());
     if(target_dir_id_ == -1u)
-        target_dir_id_ = dirs_.add_directory(std::filesystem::current_path());
+        target_dir_id_ = dirs_->AddDirectory(std::filesystem::current_path());
+
+    files_ = new Files();
+}
 
 
-//    mainwindow_->ui->lbl_target->setText("PLS");
-
-
-//    QObject::connect(mainwindow_->ui->lbl_target
-//    QObject::connect(this->ui->BrowseInboundButton, &QPushButton::clicked,
-//                     this, &MainWindow::OnBrowseFromDirButtonClicked);
-
-    dirs_.cout_all_drive_sizes();
-
+void AppController::DirectoryChanged(const unsigned int &id)
+{
+    switch (id)
+    {
+        case 0:
+        mainwindow_->SetSourceLabel(dirs_->GetDirectoryPath(id)); break;
+        case 1:
+        mainwindow_->SetTargetLabel(dirs_->GetDirectoryPath(id)); break;
+    }
 
 }

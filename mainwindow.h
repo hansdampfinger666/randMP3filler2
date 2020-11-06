@@ -14,6 +14,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void SetSourceLabel(const std::string &txt);
+    void SetTargetLabel(const std::string &txt);
 
 private:
     Ui::MainWindow *ui;

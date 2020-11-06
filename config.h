@@ -21,9 +21,9 @@ public:
     } params;
 
     Config();
-    unsigned int add_param(const std::string &param_token);
-    bool read_config();
-    std::string get_param(const unsigned int &param_index);
+    unsigned int AddParam(const std::string &param_token);
+    bool ReadConfig();
+    std::string GetParam(const unsigned int &param_index);
 
 private:
 
@@ -31,8 +31,8 @@ private:
     std::string path_;
     params params_;
 
-    bool validate_config_line(std::string &line);
-    void trim(std::string &str);
+    bool ValidateConfigLine(std::string &line);
+    void Trim(std::string &str);
 };
 
 #endif // CONFIG_H

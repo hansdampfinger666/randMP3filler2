@@ -1,8 +1,10 @@
 #ifndef APPCONTROLLER_H
 #define APPCONTROLLER_H
 
+#include <mainwindow.h>
 #include <config.h>
 #include <directories.h>
+#include <files.h>
 #include <QObject>
 
 #include <iostream>
@@ -12,24 +14,25 @@ class AppController : public QObject
 {
     Q_OBJECT
 public:
-    explicit AppController(QObject *parent = nullptr);
+    explicit AppController(MainWindow *mainwindow);
 
 signals:
 
+private slots:
+
+    void DirectoryChanged(const unsigned int &id);
+//    void UpdateSourceDirLabel();
+
 private:
 
-    QObject *mainwindow_;
+    MainWindow *mainwindow_;
     Config *config_;
     Directories *dirs_;
+    Files *files_;
 
-    unsigned int source_dir_param_id_;
-    unsigned int target_dir_param_id_;
     unsigned int source_dir_id_;
     unsigned int target_dir_id_;
     const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
-
-    void update_source_dir_label();
-
 };
 
 #endif // APPCONTROLLER_H

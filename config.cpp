@@ -7,7 +7,7 @@ Config::Config()
 }
 
 
-unsigned int Config::add_param(const std::string &param_token)
+unsigned int Config::AddParam(const std::string &param_token)
 {
     params_.tokens.push_back(param_token);
     params_.values.push_back("");
@@ -15,7 +15,7 @@ unsigned int Config::add_param(const std::string &param_token)
 }
 
 
-bool Config::read_config()
+bool Config::ReadConfig()
 {    
     if(!std::filesystem::exists(path_) || params_.tokens.size() == 0)
         return false;
@@ -25,7 +25,7 @@ bool Config::read_config()
 
     while(getline(data, line))
     {
-        if(!validate_config_line(line))
+        if(!ValidateConfigLine(line))
             continue;
 
         for(size_t i = 0; i < params_.tokens.size(); i++)
@@ -37,12 +37,12 @@ bool Config::read_config()
 }
 
 
-bool Config::validate_config_line(std::string &line)
+bool Config::ValidateConfigLine(std::string &line)
 {
     if(line.empty())
         return false;
 
-    trim(line);
+    Trim(line);
 
     if((line.find_first_of("\"") || line.find_first_of("//")) == 0)
         return false;
@@ -50,13 +50,13 @@ bool Config::validate_config_line(std::string &line)
 }
 
 
-void Config::trim(std::string &str)
+void Config::Trim(std::string &str)
 {
     str = str.substr(str.find_first_not_of(" "), str.find_last_not_of(" ") + 1);
 }
 
 
-std::string Config::get_param(const unsigned int &param_index)
+std::string Config::GetParam(const unsigned int &param_index)
 {
     if(param_index > params_.values.size())
         return {""};

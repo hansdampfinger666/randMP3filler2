@@ -2,6 +2,8 @@
 #define FILES_H
 
 #include <QObject>
+#include <filesystem>
+#include <iostream>
 
 class Files : public QObject
 {
@@ -17,7 +19,6 @@ private:
     } metadata;
 
     metadata metadata_;
-
     QList<QString> GetFolderList();
     QList<QString> GetFileList();
 

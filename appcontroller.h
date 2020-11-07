@@ -15,13 +15,14 @@ class AppController : public QObject
     Q_OBJECT
 public:
     explicit AppController(MainWindow *mainwindow);
+    void CreateCopyList();
+    void SetCopyList();
 
 signals:
 
 private slots:
 
     void DirectoryChanged(const unsigned int &id);
-//    void UpdateSourceDirLabel();
 
 private:
 

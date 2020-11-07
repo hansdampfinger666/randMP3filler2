@@ -26,7 +26,8 @@ AppController::AppController(MainWindow *mainwindow)
     if(target_dir_id_ == -1u)
         target_dir_id_ = dirs_->AddDirectory(std::filesystem::current_path());
 
-    files_ = new Files();
+//    QObject::connect(mainwindow_, &MainWindow::BTCreateCopyList,
+//                     this, &AppController::SetCopyList);
 }
 
 
@@ -39,5 +40,11 @@ void AppController::DirectoryChanged(const unsigned int &id)
         case 1:
         mainwindow_->SetTargetLabel(dirs_->GetDirectoryPath(id)); break;
     }
+
+}
+
+
+void AppController::SetCopyList()
+{
 
 }

@@ -22,6 +22,8 @@ public:
         std::vector<unsigned long> sizes_total;
     } drives;
 
+    metadata metadata_;
+
     Directories();
     unsigned int AddDirectory(const std::string &path);
     bool SetDirectoryPath(const unsigned int &id, std::string &path);
@@ -36,7 +38,6 @@ signals:
 
 private:
 
-    metadata metadata_;
     drives drives_;
 
     const float byte_tib_ = 0.0000000000009094947f;

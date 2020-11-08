@@ -14,14 +14,16 @@ SOURCES += \
     directories.cpp \
     files.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    random.cpp
 
 HEADERS += \
     appcontroller.h \
     config.h \
     directories.h \
     files.h \
-    mainwindow.h
+    mainwindow.h \
+    random.h
 
 FORMS += \
     mainwindow.ui

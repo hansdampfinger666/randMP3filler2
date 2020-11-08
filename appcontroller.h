@@ -13,23 +13,23 @@
 class AppController : public QObject
 {
     Q_OBJECT
+
 public:
     explicit AppController(MainWindow *mainwindow);
-    void CreateCopyList();
-    void SetCopyList();
 
 signals:
 
 private slots:
 
     void DirectoryChanged(const unsigned int &id);
+    void CreateCopylist();
 
 private:
 
     MainWindow *mainwindow_;
-    Config *config_;
-    Directories *dirs_;
-    Files *files_;
+    Config config_;
+    Directories dirs_;
+    Files files_;
 
     unsigned int source_dir_id_;
     unsigned int target_dir_id_;

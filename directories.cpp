@@ -7,23 +7,20 @@ Directories::Directories()
 }
 
 
-unsigned int Directories::AddDirectory(const std::string &path)
+unsigned int Directories::AddDirectory()
 {
-    if(path.empty() || !std::filesystem::exists(path) || !std::filesystem::is_directory(path))
-        return -1;
-    metadata_.paths.push_back(path);
-    metadata_.drive_ids.push_back(SetDrive(path));
-    emit DirectoryChanged(metadata_.paths.size() - 1);
-    return metadata_.paths.size() - 1;
+    dirs_.paths.push_back("");
+    dirs_.drive_ids.push_back(-1);
+    return dirs_.paths.size() - 1;
 }
 
 
-bool Directories::SetDirectoryPath(const unsigned int &id, std::string &path)
+bool Directories::SetDirectoryPath(const unsigned int &id, const std::string &path)
 {
-    if(id > metadata_.paths.size() || !std::filesystem::exists(path) || !std::filesystem::is_directory(path))
+    if(id > dirs_.paths.size() or id < 0 or !std::filesystem::exists(path) or not std::filesystem::is_directory(path))
         return false;
-    metadata_.paths.at(id) = path;
-    metadata_.drive_ids.at(id) = SetDrive(path);
+    dirs_.paths.at(id) = path;
+    dirs_.drive_ids.at(id) = SetDrive(path);
     emit DirectoryChanged(id);
     return true;
 }
@@ -41,6 +38,7 @@ unsigned int Directories::SetDrive(const std::string &path)
     drives_.names.push_back(drive.rootPath());
     drives_.sizes_free.push_back(space.available);
     drives_.sizes_total.push_back(space.capacity);
+    emit DriveChanged(drives_.names.size() - 1);
     return drives_.names.size() - 1;
 
 }
@@ -48,7 +46,7 @@ unsigned int Directories::SetDrive(const std::string &path)
 
 std::string Directories::GetDirectoryPath(const unsigned int &id)
 {
-    return metadata_.paths.at(id);
+    return dirs_.paths.at(id);
 }
 
 

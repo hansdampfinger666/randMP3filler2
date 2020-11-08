@@ -7,6 +7,7 @@
 #include <vector>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 
 
 class Config : public QObject
@@ -23,7 +24,7 @@ public:
     Config();
     unsigned int AddParam(const std::string &param_token);
     bool ReadConfig();
-    std::string GetParam(const unsigned int &param_index);
+    const std::string GetParam(const unsigned int &param_index);
 
 private:
 

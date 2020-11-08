@@ -7,8 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-//    QObject::connect(this->ui->pb_crt_copy_list, &QPushButton::clicked,
-//                     )
+    QObject::connect(this->ui->pb_crt_copy_list, &QPushButton::clicked,
+                     this, [&]{ emit CreateCopyList(); });
 }
 
 
@@ -17,14 +17,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-void MainWindow::ConnectToController(AppController *app_controller)
-{
-    ac_ = app_controller;
-
-    QObject::connect(this, &MainWindow::BTCreateCopyList,
-                     this->ac_, &AppController::SetCopyList);
-}
 
 void MainWindow::SetSourceLabel(const std::string &txt)
 {

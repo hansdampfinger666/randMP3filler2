@@ -17,7 +17,7 @@ unsigned int Config::AddParam(const std::string &param_token)
 
 bool Config::ReadConfig()
 {    
-    if(!std::filesystem::exists(path_) || params_.tokens.size() == 0)
+    if(not std::filesystem::exists(path_) or params_.tokens.size() == 0)
         return false;
 
     std::ifstream data(path_);
@@ -25,7 +25,7 @@ bool Config::ReadConfig()
 
     while(getline(data, line))
     {
-        if(!ValidateConfigLine(line))
+        if(not ValidateConfigLine(line))
             continue;
 
         for(size_t i = 0; i < params_.tokens.size(); i++)
@@ -44,7 +44,7 @@ bool Config::ValidateConfigLine(std::string &line)
 
     Trim(line);
 
-    if((line.find_first_of("\"") || line.find_first_of("//")) == 0)
+    if((line.find_first_of("\"") or line.find_first_of("//")) == 0)
         return false;
     return true;
 }
@@ -56,7 +56,7 @@ void Config::Trim(std::string &str)
 }
 
 
-std::string Config::GetParam(const unsigned int &param_index)
+const std::string Config::GetParam(const unsigned int &param_index)
 {
     if(param_index > params_.values.size())
         return {""};

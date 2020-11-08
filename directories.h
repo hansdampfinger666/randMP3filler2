@@ -14,7 +14,7 @@ public:
     typedef struct{
         std::vector<std::string> paths;
         std::vector<int> drive_ids;
-    } metadata;
+    } dirs;
 
     typedef struct{
         std::vector<QString> names;
@@ -22,12 +22,9 @@ public:
         std::vector<unsigned long> sizes_total;
     } drives;
 
-    metadata metadata_;
-
     Directories();
-    unsigned int AddDirectory(const std::string &path);
-    bool SetDirectoryPath(const unsigned int &id, std::string &path);
-
+    unsigned int AddDirectory();
+    bool SetDirectoryPath(const unsigned int &id, const std::string &path);
     std::string GetDirectoryPath(const unsigned int &id);
 
     void PrintAllDrives();
@@ -38,6 +35,7 @@ signals:
 
 private:
 
+    dirs dirs_;
     drives drives_;
 
     const float byte_tib_ = 0.0000000000009094947f;

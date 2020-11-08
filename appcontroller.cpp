@@ -1,33 +1,33 @@
 #include "appcontroller.h"
-#include "ui_mainwindow.h"
 
 
 AppController::AppController(MainWindow *mainwindow)
 {
     mainwindow_ = mainwindow;
 
-    config_ = new Config();
-    source_dir_id_ = config_->AddParam(config_tokens_.at(0));
-    target_dir_id_ = config_->AddParam(config_tokens_.at(1));
+    QObject::connect(mainwindow_, &MainWindow::CreateCopyList,
+                     this, &AppController::CreateCopylist);
 
-    if (!config_->ReadConfig())
+    source_dir_id_ = config_.AddParam(config_tokens_.at(0));
+    target_dir_id_ = config_.AddParam(config_tokens_.at(1));
+
+    if (not config_.ReadConfig())
         std::cout << "Config could not be read" << std::endl;
 
-    dirs_ = new Directories();
-
-    QObject::connect(dirs_, &Directories::DirectoryChanged,
+    QObject::connect(&dirs_, &Directories::DirectoryChanged,
                      this, &AppController::DirectoryChanged);
 
-    source_dir_id_ = dirs_->AddDirectory(config_->GetParam(source_dir_id_));
-    target_dir_id_ = dirs_->AddDirectory(config_->GetParam(target_dir_id_));
+    source_dir_id_ = dirs_.AddDirectory();
+    target_dir_id_ = dirs_.AddDirectory();
 
-    if(source_dir_id_ == -1u)
-        source_dir_id_ = dirs_->AddDirectory(std::filesystem::current_path());
-    if(target_dir_id_ == -1u)
-        target_dir_id_ = dirs_->AddDirectory(std::filesystem::current_path());
+    if(not dirs_.SetDirectoryPath(source_dir_id_, config_.GetParam(source_dir_id_)))
+        dirs_.SetDirectoryPath(source_dir_id_, std::filesystem::current_path());
 
-//    QObject::connect(mainwindow_, &MainWindow::BTCreateCopyList,
-//                     this, &AppController::SetCopyList);
+    if(not dirs_.SetDirectoryPath(target_dir_id_, config_.GetParam(target_dir_id_)))
+        dirs_.SetDirectoryPath(target_dir_id_, std::filesystem::current_path());
+
+    QObject::connect(&dirs_, &Directories::DirectoryChanged,
+                     this, &AppController::DirectoryChanged);
 }
 
 
@@ -36,15 +36,15 @@ void AppController::DirectoryChanged(const unsigned int &id)
     switch (id)
     {
         case 0:
-        mainwindow_->SetSourceLabel(dirs_->GetDirectoryPath(id)); break;
+        mainwindow_->SetSourceLabel(dirs_.GetDirectoryPath(id)); break;
         case 1:
-        mainwindow_->SetTargetLabel(dirs_->GetDirectoryPath(id)); break;
+        mainwindow_->SetTargetLabel(dirs_.GetDirectoryPath(id)); break;
     }
 
 }
 
 
-void AppController::SetCopyList()
+void AppController::CreateCopylist()
 {
-
+    files_.SetCopyList(dirs_.GetDirectoryPath(source_dir_id_), 1000);
 }

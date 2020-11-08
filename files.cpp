@@ -5,13 +5,15 @@ Files::Files()
 
 }
 
-void Files::SetCopyList(const std::string &root_path, const int &size)
+void Files::SetCopyList(const std::string &root_path, const int &size, const unsigned int &file_depth)
 {
     // assuming setup = root_folder -> folder -> subfolder, which should be typical for music
     // setting this up with variable recursion depth should be easy
 
     if(randomizer_ == nullptr)
         randomizer_ = new Random;
+
+
 
     unsigned int folder_qty = CountSubfolders(root_path);
     unsigned int folder_randomizer = randomizer_->SetupRandomizer(0, folder_qty - 1);
@@ -20,12 +22,28 @@ void Files::SetCopyList(const std::string &root_path, const int &size)
 
     while(copy_size_ < size)
     {
+        for(unsigned int i = 0; i < file_depth; i++)
+        {
+
+
+
+
+
+        }
+
+
+
+
+
         folder_id = randomizer_->GetRandom(folder_randomizer);
         std::string folder = GetSubPathNameByIndex(root_path, folder_id);
 
         if(folder not_eq "")
         {
             unsigned int subfolder_qty = CountSubfolders(folder);
+
+            if(subfolder_qty == 0)
+                continue;
 
             if(subfolder_qty == 1)
                 subfolder_id = 0;

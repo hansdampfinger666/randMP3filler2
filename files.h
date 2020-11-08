@@ -14,24 +14,28 @@ class Files : public QObject
 public:
 
     typedef struct {
+        std::vector<unsigned int> id;
+        std::vector<unsigned int> parent_id;
+        std::vector<unsigned int> size;
+        std::vector<unsigned int> detph;
         std::vector<std::string> names;
         std::vector<std::string> absolute_paths;
-        std::vector<unsigned int> parent_folder_ids;
     } files;
 
-    typedef struct{
-        std::vector<std::string> names;
-        std::vector<std::string> absolute_paths;
-        std::vector<int> sizes;
-    } folders;
+//    typedef struct{
+//        std::vector<std::string> names;
+//        std::vector<std::string> absolute_paths;
+//        std::vector<int> sizes;
+//        std::vector<unsigned int> folder_id;
+//    } folders;
 
     Files();
-    void SetCopyList(const std::string &root_path, const int &size);
+    void SetCopyList(const std::string &root_path, const int &size, const unsigned int &file_depth);
 
 private:
 
     files files_;
-    folders folders_;
+//    folders folders_;
     Random *randomizer_;
     int copy_size_;
 

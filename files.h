@@ -36,9 +36,12 @@ private:
     int copy_size_;
 
     unsigned int CountSubfolders(const std::string &path);
-    std::string GetFolderNameByIndex(const std::string &path, const unsigned int &id);
+    std::string GetSubPathNameByIndex(const std::string &path, const unsigned int &id);
     int GetFileSizesInFolder(const std::string &path);
+    std::vector<std::string> GetAbsoluteFilePathsInFolder(const std::string &path);
 
+
+    void PrintTransferList();
 
 };
 

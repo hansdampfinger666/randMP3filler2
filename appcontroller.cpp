@@ -31,7 +31,7 @@ AppController::AppController(MainWindow *mainwindow)
 }
 
 
-void AppController::DirectoryChanged(const unsigned int &id)
+void AppController::DirectoryChanged(const int &id)
 {
     switch (id)
     {
@@ -44,7 +44,13 @@ void AppController::DirectoryChanged(const unsigned int &id)
 }
 
 
+void AppController::GUISourceDirChanged(const std::string &dir)
+{
+    dirs_.SetDirectoryPath(0, dir);
+}
+
+
 void AppController::CreateCopylist()
 {
-    files_.SetCopyList(dirs_.GetDirectoryPath(source_dir_id_), 1000);
+    filetransfer_.SetCopyList(dirs_.GetDirectoryPath(source_dir_id_), 5000000000, 3);
 }

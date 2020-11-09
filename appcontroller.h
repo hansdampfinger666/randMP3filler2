@@ -4,7 +4,7 @@
 #include <mainwindow.h>
 #include <config.h>
 #include <directories.h>
-#include <files.h>
+#include <file_transfer.h>
 #include <QObject>
 
 #include <iostream>
@@ -21,7 +21,8 @@ signals:
 
 private slots:
 
-    void DirectoryChanged(const unsigned int &id);
+    void DirectoryChanged(const int &id);
+    void GUISourceDirChanged(const std::string &dir);
     void CreateCopylist();
 
 private:
@@ -29,10 +30,10 @@ private:
     MainWindow *mainwindow_;
     Config config_;
     Directories dirs_;
-    Files files_;
+    FileTransfer filetransfer_;
 
-    unsigned int source_dir_id_;
-    unsigned int target_dir_id_;
+    int source_dir_id_;
+    int target_dir_id_;
     const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
 };
 

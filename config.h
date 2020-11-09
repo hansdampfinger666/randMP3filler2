@@ -22,9 +22,9 @@ public:
     } params;
 
     Config();
-    unsigned int AddParam(const std::string &param_token);
+    int AddParam(const std::string &param_token);
     bool ReadConfig();
-    const std::string GetParam(const unsigned int &param_index);
+    const std::string GetParam(const int &param_index);
 
 private:
 

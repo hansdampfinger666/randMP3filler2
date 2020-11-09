@@ -7,7 +7,7 @@ Directories::Directories()
 }
 
 
-unsigned int Directories::AddDirectory()
+int Directories::AddDirectory()
 {
     dirs_.paths.push_back("");
     dirs_.drive_ids.push_back(-1);
@@ -15,7 +15,7 @@ unsigned int Directories::AddDirectory()
 }
 
 
-bool Directories::SetDirectoryPath(const unsigned int &id, const std::string &path)
+bool Directories::SetDirectoryPath(const int &id, const std::string &path)
 {
     if(id > dirs_.paths.size() or id < 0 or !std::filesystem::exists(path) or not std::filesystem::is_directory(path))
         return false;
@@ -26,7 +26,7 @@ bool Directories::SetDirectoryPath(const unsigned int &id, const std::string &pa
 }
 
 
-unsigned int Directories::SetDrive(const std::string &path)
+int Directories::SetDrive(const std::string &path)
 {
     QStorageInfo drive(QString::fromStdString(path));
 
@@ -44,7 +44,7 @@ unsigned int Directories::SetDrive(const std::string &path)
 }
 
 
-std::string Directories::GetDirectoryPath(const unsigned int &id)
+std::string Directories::GetDirectoryPath(const int &id)
 {
     return dirs_.paths.at(id);
 }

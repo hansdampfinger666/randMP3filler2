@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(this->ui->pb_crt_copy_list, &QPushButton::clicked,
                      this, [&]{ emit CreateCopyList(); });
+    QObject::connect(this->ui->pb_chg_source_dir, &QPushButton::clicked,
+                     this, [&]{ std::string dir = DirectoryDialog(source_dir_);
+                                emit GUISourceDirChanged(dir); });
 }
 
 
@@ -20,12 +23,33 @@ MainWindow::~MainWindow()
 
 void MainWindow::SetSourceLabel(const std::string &txt)
 {
-    this->ui->lbl_source->setText(QString::fromStdString(txt));
+    source_dir_ = QString::fromStdString(txt);
+    this->ui->lbl_source->setText(source_dir_);
 }
 
 
 void MainWindow::SetTargetLabel(const std::string &txt)
 {
-    this->ui->lbl_target->setText(QString::fromStdString(txt));
+    target_dir_ = QString::fromStdString(txt);
+    this->ui->lbl_target->setText(target_dir_);
 }
 
+
+//void MainWindow::ButtonChgFromDir()
+//{
+//    std::string dir = DirectoryDialog(source_dir_);
+//    emit GUISourceDirChanged(dir);
+//}
+
+
+std::string MainWindow::DirectoryDialog(const QString &initial_dir)
+{
+    QFileDialog dialog;
+    dialog.setOption(QFileDialog::ShowDirsOnly);
+    if(!initial_dir.isEmpty())
+        dialog.setDirectory(initial_dir);
+    dialog.exec();
+    QObject::connect(&dialog, &QFileDialog::fileSelected,
+                     &dialog, &QFileDialog::close);
+    return dialog.selectedFiles().at(0).toStdString();
+}

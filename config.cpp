@@ -7,7 +7,7 @@ Config::Config()
 }
 
 
-unsigned int Config::AddParam(const std::string &param_token)
+int Config::AddParam(const std::string &param_token)
 {
     params_.tokens.push_back(param_token);
     params_.values.push_back("");
@@ -56,7 +56,7 @@ void Config::Trim(std::string &str)
 }
 
 
-const std::string Config::GetParam(const unsigned int &param_index)
+const std::string Config::GetParam(const int &param_index)
 {
     if(param_index > params_.values.size())
         return {""};

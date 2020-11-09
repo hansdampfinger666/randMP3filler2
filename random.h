@@ -7,13 +7,16 @@
 class Random
 {
 public:
+
     Random();
-    unsigned int NewRandomizer();
-    void SetRandomizer(const unsigned int &id, const int &range_from_new, const int &range_to_new);
-    unsigned int GetRandomizer(const int &range_from, const int &range_to);
-    int GetRandom(unsigned int &id);
+    int NewRandomizer(const int &range_from, const int &range_to);
+    bool SetRandomizer(const int &id, const int &range_from_new, const int &range_to_new);
+    int GetRandomizer(const int &range_from, const int &range_to);
+    int GetRandom(const int &id);
 
 private:
+    int instances_ = 0;
+
     std::vector<int> ranges_from_;
     std::vector<int> ranges_to_;
     std::vector<std::mt19937> generators_;

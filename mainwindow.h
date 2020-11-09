@@ -23,9 +23,7 @@ public:
 signals:
     void CreateCopyList();
     void GUISourceDirChanged(std::string &dir);
-
-private slots:
-    void ButtonChgFromDir();
+    void GUITargetDirChanged(std::string &dir);
 
 private:
     Ui::MainWindow *ui;

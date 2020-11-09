@@ -4,9 +4,12 @@
 AppController::AppController(MainWindow *mainwindow)
 {
     mainwindow_ = mainwindow;
-
     QObject::connect(mainwindow_, &MainWindow::CreateCopyList,
                      this, &AppController::CreateCopylist);
+    QObject::connect(mainwindow_, &MainWindow::GUISourceDirChanged,
+                     this, &AppController::GUISourceDirChanged);
+    QObject::connect(mainwindow_, &MainWindow::GUITargetDirChanged,
+                     this, &AppController::GUITargetDirChanged);
 
     source_dir_id_ = config_.AddParam(config_tokens_.at(0));
     target_dir_id_ = config_.AddParam(config_tokens_.at(1));
@@ -47,6 +50,12 @@ void AppController::DirectoryChanged(const int &id)
 void AppController::GUISourceDirChanged(const std::string &dir)
 {
     dirs_.SetDirectoryPath(0, dir);
+}
+
+
+void AppController::GUITargetDirChanged(const std::string &dir)
+{
+    dirs_.SetDirectoryPath(1, dir);
 }
 
 

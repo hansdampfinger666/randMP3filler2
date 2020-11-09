@@ -17,12 +17,11 @@ class AppController : public QObject
 public:
     explicit AppController(MainWindow *mainwindow);
 
-signals:
-
 private slots:
 
     void DirectoryChanged(const int &id);
     void GUISourceDirChanged(const std::string &dir);
+    void GUITargetDirChanged(const std::string &dir);
     void CreateCopylist();
 
 private:

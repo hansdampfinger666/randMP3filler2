@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(this->ui->pb_chg_source_dir, &QPushButton::clicked,
                      this, [&]{ std::string dir = DirectoryDialog(source_dir_);
                                 emit GUISourceDirChanged(dir); });
+    QObject::connect(this->ui->pb_chg_target_dir, &QPushButton::clicked,
+                     this, [&]{ std::string dir = DirectoryDialog(target_dir_);
+                                emit GUITargetDirChanged(dir); });
 }
 
 
@@ -33,13 +36,6 @@ void MainWindow::SetTargetLabel(const std::string &txt)
     target_dir_ = QString::fromStdString(txt);
     this->ui->lbl_target->setText(target_dir_);
 }
-
-
-//void MainWindow::ButtonChgFromDir()
-//{
-//    std::string dir = DirectoryDialog(source_dir_);
-//    emit GUISourceDirChanged(dir);
-//}
 
 
 std::string MainWindow::DirectoryDialog(const QString &initial_dir)

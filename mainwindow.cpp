@@ -10,11 +10,14 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(this->ui->pb_crt_copy_list, &QPushButton::clicked,
                      this, [&]{ emit CreateCopyList(); });
     QObject::connect(this->ui->pb_chg_source_dir, &QPushButton::clicked,
-                     this, [&]{ std::string dir = DirectoryDialog(source_dir_);
-                                emit GUISourceDirChanged(dir); });
+                     this, [&]{ emit GUISourceDirChanged(DirectoryDialog(source_dir_)); });
     QObject::connect(this->ui->pb_chg_target_dir, &QPushButton::clicked,
-                     this, [&]{ std::string dir = DirectoryDialog(target_dir_);
-                                emit GUITargetDirChanged(dir); });
+                     this, [&]{ emit GUITargetDirChanged(DirectoryDialog(target_dir_)); });
+    QObject::connect(this->ui->edit_prc_fill_up, &QLineEdit::editingFinished,
+                     this, [&]{ emit GUIFillPercentOfFree(this->ui->edit_prc_fill_up->text()); });
+
+    val_int_ = new QIntValidator(this);
+    this->ui->edit_prc_fill_up->setValidator(val_int_);
 }
 
 MainWindow::~MainWindow(){ delete ui; }
@@ -45,3 +48,19 @@ std::string MainWindow::DirectoryDialog(const QString &initial_dir)
                      &dialog, &QFileDialog::close);
     return dialog.selectedFiles().at(0).toStdString();
 }
+
+
+void MainWindow::SetTargetUsedSpace(const float &bytes)
+{
+    std::string txt = Format::GetReadableBytes(bytes);
+    this->ui->used->setText(QString::fromStdString(txt));
+}
+
+
+void MainWindow::SetTargetFreeSpace(const float &bytes)
+{
+    std::string txt = Format::GetReadableBytes(bytes);
+    this->ui->free->setText(QString::fromStdString(txt));
+}
+
+

@@ -1,8 +1,11 @@
 #include "file_transfer.h"
 
 
-void FileTransfer::SetCopyList(const std::string &source_path, const long &size, const int &file_depth)
+void FileTransfer::SetCopyList(const std::string &source_path, const int &file_depth)
 {
+    if(copy_size_ == 0)
+        return;
+
     int top_dir_qty = CountSubfolders(source_path);
 
     if(top_dir_qty == 0)
@@ -13,7 +16,7 @@ void FileTransfer::SetCopyList(const std::string &source_path, const long &size,
 
     int randomizer_id_top_dir = randomizer_->NewRandomizer(0, top_dir_qty - 1);
 
-    while(folders_.total_size < size - 100000000) // 100 mb landing zone
+    while(folders_.total_size < copy_size_ - 100000000) // 100 mb landing zone
     {
         int dir_id = randomizer_->GetRandom(randomizer_id_top_dir);
         std::string dir_path = GetSubPathNameByIndex(source_path, dir_id);
@@ -38,8 +41,8 @@ void FileTransfer::SetCopyList(const std::string &source_path, const long &size,
         }
         if(dir_path != "")
         {
-            int folder_size = GetFileSizesInFolder(dir_path);
-            if(folders_.total_size + folder_size <= size and folder_size > 0
+            float folder_size = GetFileSizesInFolder(dir_path);
+            if(folders_.total_size + folder_size <= copy_size_ and folder_size > 0
                     and FolderContainsFiles(dir_path))
             {
                 folders_.total_size += folder_size;
@@ -76,7 +79,7 @@ std::string FileTransfer::GetSubPathNameByIndex(const std::string &root_path, co
 }
 
 
-long FileTransfer::GetFileSizesInFolder(const std::string &path)
+float FileTransfer::GetFileSizesInFolder(const std::string &path)
 {
     int size = 0;
     for(auto file : std::filesystem::directory_iterator(path))

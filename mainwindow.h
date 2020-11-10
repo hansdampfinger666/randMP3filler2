@@ -1,9 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-//#include <appcontroller.h>
+#include <format.h>
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QIntValidator>
 #include <iostream>
 
 QT_BEGIN_NAMESPACE
@@ -19,13 +20,18 @@ public:
     ~MainWindow();
     void SetSourceLabel(const std::string &txt);
     void SetTargetLabel(const std::string &txt);  
+    void SetTargetUsedSpace(const float &bytes);
+    void SetTargetFreeSpace(const float &bytes);
 
 signals:
     void CreateCopyList();
-    void GUISourceDirChanged(std::string &dir);
-    void GUITargetDirChanged(std::string &dir);
+    void GUISourceDirChanged(std::string dir);
+    void GUITargetDirChanged(std::string dir);
+    void GUIFillPercentOfFree(QString percent);
 
 private:
+    QIntValidator *val_int_;
+
     Ui::MainWindow *ui;
     QString source_dir_;
     QString target_dir_;

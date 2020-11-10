@@ -13,6 +13,7 @@ SOURCES += \
     config.cpp \
     directories.cpp \
     file_transfer.cpp \
+    format.cpp \
     main.cpp \
     mainwindow.cpp \
     random.cpp
@@ -22,6 +23,7 @@ HEADERS += \
     config.h \
     directories.h \
     file_transfer.h \
+    format.h \
     mainwindow.h \
     random.h
 

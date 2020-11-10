@@ -5,6 +5,7 @@
 #include <config.h>
 #include <directories.h>
 #include <file_transfer.h>
+#include <format.h>
 #include <QObject>
 
 #include <iostream>
@@ -19,9 +20,11 @@ public:
 
 private slots:
 
-    void DirectoryChanged(const int &id);
-    void GUISourceDirChanged(const std::string &dir);
-    void GUITargetDirChanged(const std::string &dir);
+    void DirectoryChanged(const int &dir_id);
+    void DriveChanged(const int &dir_id);
+    void GUISourceDirChanged(const std::string dir);
+    void GUITargetDirChanged(const std::string dir);
+    void GUIFillPercentOfFree(const QString percent);
     void CreateCopylist();
 
 private:
@@ -31,8 +34,13 @@ private:
     Directories dirs_;
     FileTransfer filetransfer_;
 
+    int source_dir_param_id_;
+    int target_dir_param_id_;
+
     int source_dir_id_;
     int target_dir_id_;
+    int source_drive_id_;
+    int target_drive_id_;
     const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
 };
 

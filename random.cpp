@@ -1,9 +1,5 @@
 #include "random.h"
 
-Random::Random()
-{
-}
-
 
 int Random::NewRandomizer(const int &range_from, const int &range_to)
 {

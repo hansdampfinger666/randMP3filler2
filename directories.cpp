@@ -1,11 +1,6 @@
 #include "directories.h"
 #include <iostream>
 
-Directories::Directories()
-{
-
-}
-
 
 int Directories::AddDirectory()
 {
@@ -38,7 +33,6 @@ int Directories::SetDrive(const std::string &path)
     drives_.names.push_back(drive.rootPath());
     drives_.sizes_free.push_back(space.available);
     drives_.sizes_total.push_back(space.capacity);
-    emit DriveChanged(drives_.names.size() - 1);
     return drives_.names.size() - 1;
 
 }

@@ -17,11 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
                                 emit GUITargetDirChanged(dir); });
 }
 
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
+MainWindow::~MainWindow(){ delete ui; }
 
 
 void MainWindow::SetSourceLabel(const std::string &txt)

@@ -22,7 +22,6 @@ public:
         std::vector<long> sizes_total;
     } drives;
 
-    Directories();
     int AddDirectory();
     bool SetDirectoryPath(const int &id, const std::string &path);
     std::string GetDirectoryPath(const int &id);
@@ -31,7 +30,6 @@ public:
 
 signals:
     void DirectoryChanged(const int &id);
-    void DriveChanged(const int &id);
 
 private:
 

@@ -28,9 +28,6 @@ AppController::AppController(MainWindow *mainwindow)
 
     if(not dirs_.SetDirectoryPath(target_dir_id_, config_.GetParam(target_dir_id_)))
         dirs_.SetDirectoryPath(target_dir_id_, std::filesystem::current_path());
-
-    QObject::connect(&dirs_, &Directories::DirectoryChanged,
-                     this, &AppController::DirectoryChanged);
 }
 
 
@@ -38,12 +35,9 @@ void AppController::DirectoryChanged(const int &id)
 {
     switch (id)
     {
-        case 0:
-        mainwindow_->SetSourceLabel(dirs_.GetDirectoryPath(id)); break;
-        case 1:
-        mainwindow_->SetTargetLabel(dirs_.GetDirectoryPath(id)); break;
+        case 0: mainwindow_->SetSourceLabel(dirs_.GetDirectoryPath(id)); break;
+        case 1: mainwindow_->SetTargetLabel(dirs_.GetDirectoryPath(id)); break;
     }
-
 }
 
 

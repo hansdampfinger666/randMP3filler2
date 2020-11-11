@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(this->ui->pb_crt_copy_list, &QPushButton::clicked,
                      this, [&]{ emit CreateCopyList(); });
+    QObject::connect(this->ui->pb_copy_list, &QPushButton::clicked,
+                     this, [&]{ emit CopyList(); });
     QObject::connect(this->ui->pb_chg_source_dir, &QPushButton::clicked,
                      this, [&]{ emit GUISourceDirChanged(DirectoryDialog(source_dir_)); });
     QObject::connect(this->ui->pb_chg_target_dir, &QPushButton::clicked,
@@ -63,4 +65,10 @@ void MainWindow::SetTargetFreeSpace(const float &bytes)
     this->ui->free->setText(QString::fromStdString(txt));
 }
 
+
+void MainWindow::SetTargetFillSpace(const float &bytes)
+{
+    std::string txt = Format::GetReadableBytes(bytes);
+    this->ui->fill_space->setText(QString::fromStdString(txt));
+}
 

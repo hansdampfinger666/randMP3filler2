@@ -12,7 +12,7 @@ SOURCES += \
     appcontroller.cpp \
     config.cpp \
     directories.cpp \
-    file_transfer.cpp \
+    filetransfer.cpp \
     format.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -22,7 +22,7 @@ HEADERS += \
     appcontroller.h \
     config.h \
     directories.h \
-    file_transfer.h \
+    filetransfer.h \
     format.h \
     mainwindow.h \
     random.h

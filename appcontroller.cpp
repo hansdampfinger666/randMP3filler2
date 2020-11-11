@@ -3,7 +3,14 @@
 
 AppController::AppController(MainWindow *mainwindow)
 {
-    // mainwindow
+    SetupMainwindow(mainwindow);
+    SetupConfig();
+    SetupDirectories();
+}
+
+
+void AppController::SetupMainwindow(MainWindow *mainwindow)
+{
     mainwindow_ = mainwindow;
     QObject::connect(mainwindow_, &MainWindow::CreateCopyList,
                      this, &AppController::CreateCopylist);
@@ -13,15 +20,21 @@ AppController::AppController(MainWindow *mainwindow)
                      this, &AppController::GUITargetDirChanged);
     QObject::connect(mainwindow_, &MainWindow::GUIFillPercentOfFree,
                      this, &AppController::GUIFillPercentOfFree);
+}
 
-    //config
+
+void AppController::SetupConfig()
+{
     source_dir_param_id_ = config_.AddParam(config_tokens_.at(0));
     target_dir_param_id_ = config_.AddParam(config_tokens_.at(1));
 
     if (not config_.ReadConfig())
         std::cout << "Config could not be read" << std::endl;
+}
 
-    //directories
+
+void AppController::SetupDirectories()
+{
     QObject::connect(&dirs_, &Directories::DirectoryChanged,
                      this, &AppController::DirectoryChanged);
     QObject::connect(&dirs_, &Directories::DriveForDirChanged,
@@ -30,12 +43,13 @@ AppController::AppController(MainWindow *mainwindow)
     source_dir_id_ = dirs_.AddDirectory();
     target_dir_id_ = dirs_.AddDirectory();
 
-    if(not dirs_.SetDirectoryPath(source_dir_id_, config_.GetParam(source_dir_param_id_)))
+    std::string source_path = config_.GetParam(source_dir_param_id_);
+    if(not dirs_.SetDirectoryPath(source_dir_id_, source_path))
         dirs_.SetDirectoryPath(source_dir_id_, std::filesystem::current_path());
 
-    if(not dirs_.SetDirectoryPath(target_dir_id_, config_.GetParam(target_dir_param_id_)))
+    std::string target_path = config_.GetParam(target_dir_param_id_);
+    if(not dirs_.SetDirectoryPath(target_dir_id_, target_path))
         dirs_.SetDirectoryPath(target_dir_id_, std::filesystem::current_path());
-
 }
 
 
@@ -80,7 +94,7 @@ void AppController::GUIFillPercentOfFree(const QString percent)
 {
     float factor = percent.toFloat() / 100;
     float size = dirs_.GetDriveFreeSpace(target_dir_id_) * factor;
-    //update GUI with bytes to transfer
+    mainwindow_->SetTargetFillSpace(size);
     filetransfer_.SetTransferSize(size);
 }
 
@@ -88,4 +102,10 @@ void AppController::GUIFillPercentOfFree(const QString percent)
 void AppController::CreateCopylist()
 {
     filetransfer_.SetCopyList(dirs_.GetDirPath(source_dir_id_), 3);
+}
+
+
+void AppController::CopyList()
+{
+    filetransfer_.TransferFiles("path");
 }

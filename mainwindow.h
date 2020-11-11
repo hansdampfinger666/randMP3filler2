@@ -22,9 +22,11 @@ public:
     void SetTargetLabel(const std::string &txt);  
     void SetTargetUsedSpace(const float &bytes);
     void SetTargetFreeSpace(const float &bytes);
+    void SetTargetFillSpace(const float &bytes);
 
 signals:
     void CreateCopyList();
+    void CopyList();
     void GUISourceDirChanged(std::string dir);
     void GUITargetDirChanged(std::string dir);
     void GUIFillPercentOfFree(QString percent);

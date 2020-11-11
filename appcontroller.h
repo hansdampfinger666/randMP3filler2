@@ -4,7 +4,7 @@
 #include <mainwindow.h>
 #include <config.h>
 #include <directories.h>
-#include <file_transfer.h>
+#include <filetransfer.h>
 #include <format.h>
 #include <QObject>
 
@@ -26,6 +26,7 @@ private slots:
     void GUITargetDirChanged(const std::string dir);
     void GUIFillPercentOfFree(const QString percent);
     void CreateCopylist();
+    void CopyList();
 
 private:
 
@@ -42,6 +43,10 @@ private:
     int source_drive_id_;
     int target_drive_id_;
     const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
+
+    void SetupMainwindow(MainWindow *mainwindow);
+    void SetupConfig();
+    void SetupDirectories();
 };
 
 #endif // APPCONTROLLER_H

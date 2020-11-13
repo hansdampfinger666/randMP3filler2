@@ -10,7 +10,10 @@ void FileTransfer::SetCopyList(const std::string &source_path, const int &file_d
 
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
-    while(folders_.total_size < copy_size_ - 100000000) // 100 mb landing zone
+    while(folders_.total_size < copy_size_ - 100000000)
+        // 100 mb landing zone, size depens on target folders we're dealing with
+        // don't want to make it too small, to avoid excessive recursions
+        // don't want to make it too large, to avoid excessive deviation from user intent
     {
         std::string dir = source_path;
 
@@ -31,9 +34,17 @@ void FileTransfer::SetCopyList(const std::string &source_path, const int &file_d
                     randomizer_id = randomizer_->NewRandomizer(0, dir_qty - 1);
                 subdir_id = randomizer_->GetRandom(randomizer_id);
             }
-            dir = GetSubPathNameByIndex(dir, subdir_id);
+            dir = GetSubPathNameByIndex(dir, subdir_id);    
+
             if(dir != "" and i + 1 == file_depth - 1)
             {
+                // if folder is duplicate, get new one, the lesser the diff between available source
+                // folders and target space is, the more this will be likely to trigger and the
+                // more we need to think about implementing a different randomizing technique
+                // because the runtime will increase unacceptably
+                if(IsDuplicateFolder(dir))
+                    break;
+
                 float folder_size = GetFileSizesInFolder(dir);
                 if(folders_.total_size + folder_size <= copy_size_ and folder_size > 0
                         and FolderContainsFiles(dir))
@@ -102,10 +113,24 @@ bool FileTransfer::FolderContainsFiles(const std::string &path)
 }
 
 
+bool FileTransfer::IsDuplicateFolder(const std::string &path)
+{
+    std::vector<std::string>::iterator found = find(folders_.paths.begin(), folders_.paths.end(), path);
+    if(found != folders_.paths.end())
+        return true;
+    return false;
+}
+
+
 void FileTransfer::TransferFiles(const std::string &target_path)
 {
+    int resolve_n_times = file_depth_ - 1;
 
+    for(int i = 0; i < resolve_n_times; i++)
+    {
+        std::string path = std::filesystem::
 
+    }
 }
 
 

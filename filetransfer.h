@@ -39,6 +39,7 @@ private:
     std::string GetSubPathNameByIndex(const std::string &root_path, const int &id);
     float GetFileSizesInFolder(const std::string &path);
     bool FolderContainsFiles(const std::string &path);
+    bool IsDuplicateFolder(const std::string &path);
 
 
     void PrintTransferList();

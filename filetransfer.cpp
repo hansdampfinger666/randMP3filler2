@@ -124,13 +124,24 @@ bool FileTransfer::IsDuplicateFolder(const std::string &path)
 
 void FileTransfer::TransferFiles(const std::string &target_path)
 {
-    int resolve_n_times = file_depth_ - 1;
+    int drill_up_depth = file_depth_ - 1;
+    std::string path;
+    std::string target;
 
-    for(int i = 0; i < resolve_n_times; i++)
+    for(auto folder : folders_.paths)
     {
-        std::string path = std::filesystem::
+        for(int drill_up = drill_up_depth; drill_up < file_depth_; drill_up--) // define drill up depth (starting at root node - 1, then step down)
+        {
+            path = folder;
+            for(int i = 0; i < drill_up; i++)
+                path = std::filesystem::path(path).parent_path();
 
+
+        }
     }
+
+    for(auto folder : folders_.paths)
+        std::filesystem::copy(folder, target_path, std::filesystem::copy_options::recursive);
 }
 
 
@@ -139,7 +150,14 @@ void FileTransfer::TransferFiles(const std::string &target_path)
 void FileTransfer::PrintTransferList()
 {
     for(unsigned long i = 0; i < folders_.paths.size(); i++)
-        std::cout << "Folder: " << folders_.paths.at(i) << " / Size: " << Format::GetReadableBytes(folders_.sizes.at(i)) << std::endl;
+        std::cout << "Folder: " << folders_.paths.at(i) << " / Size: " << Format::GetReadableBytes(folders_.sizes.at(i)) << std::endl <<
+                    "root_name: " << std::filesystem::path(folders_.paths.at(i)).root_name() << std::endl <<
+                    "root_directory: " << std::filesystem::path(folders_.paths.at(i)).root_directory() << std::endl <<
+                    "root_path: " << std::filesystem::path(folders_.paths.at(i)).root_path() << std::endl <<
+                    "relative_path: " << std::filesystem::path(folders_.paths.at(i)).relative_path() << std::endl <<
+                    "parent_path: " << std::filesystem::path(folders_.paths.at(i)).parent_path() << std::endl <<
+                    "file_name: " << std::filesystem::path(folders_.paths.at(i)).filename() << std::endl <<
+                    "stem: " << std::filesystem::path(folders_.paths.at(i)).stem() << std::endl;
     std::cout << "______________" << std::endl <<
                  "NUMBER DIRS TO COPY: " << folders_.qty << std::endl <<
                  "FILE DEPTH: " << file_depth_ << std::endl <<

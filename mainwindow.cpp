@@ -8,9 +8,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     QObject::connect(this->ui->pb_crt_copy_list, &QPushButton::clicked,
-                     this, [&]{ emit CreateCopyList(); });
+                     this, [&]{ emit GUICreateCopyList(); });
     QObject::connect(this->ui->pb_copy_list, &QPushButton::clicked,
-                     this, [&]{ emit CopyList(); });
+                     this, [&]{ emit GUICopyList(); });
     QObject::connect(this->ui->pb_chg_source_dir, &QPushButton::clicked,
                      this, [&]{ emit GUISourceDirChanged(DirectoryDialog(source_dir_)); });
     QObject::connect(this->ui->pb_chg_target_dir, &QPushButton::clicked,

@@ -25,8 +25,8 @@ public:
     void SetTargetFillSpace(const float &bytes);
 
 signals:
-    void CreateCopyList();
-    void CopyList();
+    void GUICreateCopyList();
+    void GUICopyList();
     void GUISourceDirChanged(std::string dir);
     void GUITargetDirChanged(std::string dir);
     void GUIFillPercentOfFree(QString percent);

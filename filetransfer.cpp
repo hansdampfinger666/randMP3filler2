@@ -124,9 +124,10 @@ bool FileTransfer::IsDuplicateFolder(const std::string &path)
 
 void FileTransfer::TransferFiles(const std::string &target_path)
 {
-    int drill_up_depth = file_depth_ - 1;
-    std::string path;
+    int drill_up_depth = file_depth_ - 2;
+    std::filesystem::path path;
     std::string target;
+    bool folder_exists;
 
     for(auto folder : folders_.paths)
     {
@@ -135,6 +136,10 @@ void FileTransfer::TransferFiles(const std::string &target_path)
             path = folder;
             for(int i = 0; i < drill_up; i++)
                 path = std::filesystem::path(path).parent_path();
+
+            std::string source_folder = path.filename();
+            std::string pls = target_path + source_folder;
+            std::filesystem::create_directory(pls);
 
 
         }

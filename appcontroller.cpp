@@ -12,8 +12,10 @@ AppController::AppController(MainWindow *mainwindow)
 void AppController::SetupMainwindow(MainWindow *mainwindow)
 {
     mainwindow_ = mainwindow;
-    QObject::connect(mainwindow_, &MainWindow::CreateCopyList,
+    QObject::connect(mainwindow_, &MainWindow::GUICreateCopyList,
                      this, &AppController::CreateCopylist);
+    QObject::connect(mainwindow_, &MainWindow::GUICopyList,
+                     this, &AppController::CopyList);
     QObject::connect(mainwindow_, &MainWindow::GUISourceDirChanged,
                      this, &AppController::GUISourceDirChanged);
     QObject::connect(mainwindow_, &MainWindow::GUITargetDirChanged,
@@ -107,5 +109,5 @@ void AppController::CreateCopylist()
 
 void AppController::CopyList()
 {
-    filetransfer_.TransferFiles("path");
+    filetransfer_.TransferFiles(dirs_.GetDirPath(target_dir_id_));
 }

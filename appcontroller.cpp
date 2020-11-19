@@ -22,6 +22,10 @@ void AppController::SetupMainwindow(MainWindow *mainwindow)
                      this, &AppController::GUITargetDirChanged);
     QObject::connect(mainwindow_, &MainWindow::GUIFillPercentOfFree,
                      this, &AppController::GUIFillPercentOfFree);
+    QObject::connect(&filetransfer_, &FileTransfer::ReportListStatus,
+                     this, &AppController::ReceiveListStatus);
+    QObject::connect(&filetransfer_, &FileTransfer::ReportCopyStatus,
+                     this, &AppController::ReceiveCopyStatus);
 }
 
 
@@ -66,14 +70,10 @@ void AppController::DirectoryChanged(const int &dir_id)
 
 void AppController::DriveChanged(const int &dir_id)
 {
-    float used = dirs_.GetDriveUsedSpace(dir_id);
-    float free = dirs_.GetDriveFreeSpace(dir_id);
-
-    if(dir_id == source_dir_id_)
+    if (dir_id == target_dir_id_)
     {
-    }
-    else if (dir_id == target_dir_id_)
-    {
+        float used = dirs_.GetDriveUsedSpace(dir_id);
+        float free = dirs_.GetDriveFreeSpace(dir_id);
         mainwindow_->SetTargetUsedSpace(used);
         mainwindow_->SetTargetFreeSpace(free);
     }
@@ -103,11 +103,33 @@ void AppController::GUIFillPercentOfFree(const QString percent)
 
 void AppController::CreateCopylist()
 {
+    mainwindow_->SetMainThreadBusy(true);
+    mainwindow_->SetListStatusBarVisible(true);
     filetransfer_.SetCopyList(dirs_.GetDirPath(source_dir_id_), 3);
+    mainwindow_->SetMainThreadBusy(false);
+    mainwindow_->SetListStatusBarValue(100);
 }
 
 
 void AppController::CopyList()
 {
+    mainwindow_->SetMainThreadBusy(true);
+    mainwindow_->SetCopyStatusBarVisible(true);
     filetransfer_.TransferFiles(dirs_.GetDirPath(target_dir_id_));
+    mainwindow_->SetMainThreadBusy(false);
+    mainwindow_->SetCopyStatusBarValue(100);
+}
+
+
+void AppController::ReceiveListStatus(const float &size)
+{
+    int percent = (int)(size / filetransfer_.GetTransferSize() * 100);
+    mainwindow_->SetListStatusBarValue(percent);
+}
+
+
+void AppController::ReceiveCopyStatus(const float &size)
+{
+    int percent = (int)(size / filetransfer_.GetTransferSize() * 100);
+    mainwindow_->SetCopyStatusBarValue(percent);
 }

@@ -11,9 +11,9 @@ void FileTransfer::SetCopyList(const std::string &source_path, const int &file_d
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
     while(folders_.total_size < copy_size_ - 100000000)
-        // 100 mb landing zone, size depens on target folders we're dealing with
-        // don't want to make it too small, to avoid excessive recursions
-        // don't want to make it too large, to avoid excessive deviation from user intent
+        // 100 mb landing zone, size depends on source folder sizes we're dealing with
+        // too small -> excessive recursions
+        // too large -> excessive deviation from user intent
     {
         std::string dir = source_path;
 
@@ -43,7 +43,10 @@ void FileTransfer::SetCopyList(const std::string &source_path, const int &file_d
                 // more we need to think about implementing a different randomizing technique
                 // because the runtime will increase unacceptably
                 if(IsDuplicateFolder(dir))
+                {
+                    folders_.duplicate_hits++;
                     break;
+                }
 
                 float folder_size = GetFileSizesInFolder(dir);
                 if(folders_.total_size + folder_size <= copy_size_ and folder_size > 0
@@ -51,8 +54,11 @@ void FileTransfer::SetCopyList(const std::string &source_path, const int &file_d
                 {
                     folders_.qty++;
                     folders_.total_size += folder_size;
+                    // size of std::string (dir) seems to be 32 bytes, std::filesystem::path object
+                    // is 40 bytes, so save string and generate path object as it is useful/needed
                     folders_.paths.push_back(dir);
                     folders_.sizes.push_back(folder_size);
+                    emit ReportListStatus(folders_.total_size);
                 }
             }
         }
@@ -125,48 +131,56 @@ bool FileTransfer::IsDuplicateFolder(const std::string &path)
 void FileTransfer::TransferFiles(const std::string &target_path)
 {
     int drill_up_depth = file_depth_ - 2;
-    std::filesystem::path path;
-    std::string target;
-    bool folder_exists;
+    std::vector<std::filesystem::path> folder_struct (file_depth_ - 1);
+    int copied_size = 0;
+    int index = 0;
 
     for(auto folder : folders_.paths)
     {
-        for(int drill_up = drill_up_depth; drill_up < file_depth_; drill_up--) // define drill up depth (starting at root node - 1, then step down)
+        auto path = std::filesystem::path(folder);
+        folder_struct.at(0) = path;
+
+        for(int i = 1; i <= drill_up_depth; i++)
         {
-            path = folder;
-            for(int i = 0; i < drill_up; i++)
-                path = std::filesystem::path(path).parent_path();
-
-            std::string source_folder = path.filename();
-            std::string pls = target_path + source_folder;
-            std::filesystem::create_directory(pls);
-
-
+            path = path.parent_path();
+            folder_struct.at(i) = path;
         }
-    }
 
-    for(auto folder : folders_.paths)
-        std::filesystem::copy(folder, target_path, std::filesystem::copy_options::recursive);
+        std::filesystem::path target_folder = target_path;
+        for(int i = folder_struct.size() - 1; i >= 0 ; i--)
+            target_folder /= folder_struct.at(i).filename();
+
+        std::filesystem::create_directories(target_folder);
+        std::filesystem::copy(folder, target_folder);
+        copied_size += folders_.sizes.at(index);
+        emit ReportCopyStatus(copied_size);
+        index++;
+    }
 }
 
 
+void FileTransfer::ResetTransferList()
+{
+    folders_ = { 0, 0, 0, 0, {}, {} };
+}
 
 
 void FileTransfer::PrintTransferList()
 {
-    for(unsigned long i = 0; i < folders_.paths.size(); i++)
-        std::cout << "Folder: " << folders_.paths.at(i) << " / Size: " << Format::GetReadableBytes(folders_.sizes.at(i)) << std::endl <<
-                    "root_name: " << std::filesystem::path(folders_.paths.at(i)).root_name() << std::endl <<
-                    "root_directory: " << std::filesystem::path(folders_.paths.at(i)).root_directory() << std::endl <<
-                    "root_path: " << std::filesystem::path(folders_.paths.at(i)).root_path() << std::endl <<
-                    "relative_path: " << std::filesystem::path(folders_.paths.at(i)).relative_path() << std::endl <<
-                    "parent_path: " << std::filesystem::path(folders_.paths.at(i)).parent_path() << std::endl <<
-                    "file_name: " << std::filesystem::path(folders_.paths.at(i)).filename() << std::endl <<
-                    "stem: " << std::filesystem::path(folders_.paths.at(i)).stem() << std::endl;
+//    for(unsigned long i = 0; i < folders_.paths.size(); i++)
+//        std::cout << "Folder: " << folders_.paths.at(i) << " / Size: " << Format::GetReadableBytes(folders_.sizes.at(i)) << std::endl <<
+//                    "root_name: " << std::filesystem::path(folders_.paths.at(i)).root_name() << std::endl <<
+//                    "root_directory: " << std::filesystem::path(folders_.paths.at(i)).root_directory() << std::endl <<
+//                    "root_path: " << std::filesystem::path(folders_.paths.at(i)).root_path() << std::endl <<
+//                    "relative_path: " << std::filesystem::path(folders_.paths.at(i)).relative_path() << std::endl <<
+//                    "parent_path: " << std::filesystem::path(folders_.paths.at(i)).parent_path() << std::endl <<
+//                    "file_name: " << std::filesystem::path(folders_.paths.at(i)).filename() << std::endl <<
+//                    "stem: " << std::filesystem::path(folders_.paths.at(i)).stem() << std::endl;
     std::cout << "______________" << std::endl <<
                  "NUMBER DIRS TO COPY: " << folders_.qty << std::endl <<
                  "FILE DEPTH: " << file_depth_ << std::endl <<
                  "TOTAL SIZE: " << Format::GetReadableBytes(folders_.total_size) << std::endl <<
+                 "DUPLIACTE HITS: " << folders_.duplicate_hits << std::endl <<
                  "EXECUTION TIME: " << Format::GetReadableNanoSec(folders_.runtime) << std::endl <<
-                 "______________";
+                 "______________" << std::endl;
 }

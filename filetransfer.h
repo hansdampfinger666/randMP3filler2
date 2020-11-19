@@ -16,9 +16,10 @@ class FileTransfer : public QObject
 public:
 
     typedef struct {
-        int qty = 0;
-        float total_size = 0;
-        float runtime = 0;
+        int qty;
+        int duplicate_hits;
+        float total_size;
+        float runtime;
         std::vector<std::string> paths;
         std::vector<float> sizes;
     } folders;
@@ -27,13 +28,18 @@ public:
     void SetCopyList(const std::string &source_path, const int &file_depth);
     void TransferFiles(const std::string &target_path);
     float GetTransferSize(){ return copy_size_; };
+    void ResetTransferList();
+
+signals:
+    void ReportListStatus(const float &size);
+    void ReportCopyStatus(const float &size);
 
 private:
 
-    folders folders_;
-    Random *randomizer_ {nullptr};
+    folders folders_ { 0, 0, 0, 0, {}, {} };
+    Random *randomizer_ = nullptr;
     float copy_size_ = 0;
-    int file_depth_ = 1;    //built for minimum file depth of 1: root/folder_depth1/file
+    int file_depth_ = 1;    //built for minimum file depth of 1: root/folder_depth=1/filedepth=2
 
     int CountSubfolders(const std::string &path);
     std::string GetSubPathNameByIndex(const std::string &root_path, const int &id);

@@ -7,6 +7,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    this->ui->prog_bar_list->setVisible(false);
+    this->ui->prog_bar_copy->setVisible(false);
+
     QObject::connect(this->ui->pb_crt_copy_list, &QPushButton::clicked,
                      this, [&]{ emit GUICreateCopyList(); });
     QObject::connect(this->ui->pb_copy_list, &QPushButton::clicked,
@@ -72,3 +75,35 @@ void MainWindow::SetTargetFillSpace(const float &bytes)
     this->ui->fill_space->setText(QString::fromStdString(txt));
 }
 
+
+void MainWindow::SetMainThreadBusy(const bool &flag)
+{
+    if(flag)
+        QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    else
+        QGuiApplication::restoreOverrideCursor();
+}
+
+
+void MainWindow::SetListStatusBarVisible(const bool &flag)
+{
+    this->ui->prog_bar_list->setVisible(flag);
+}
+
+
+void MainWindow::SetListStatusBarValue(const int &val)
+{
+    this->ui->prog_bar_list->setValue(val);
+}
+
+
+void MainWindow::SetCopyStatusBarVisible(const bool &flag)
+{
+    this->ui->prog_bar_copy->setVisible(flag);
+}
+
+
+void MainWindow::SetCopyStatusBarValue(const int &val)
+{
+    this->ui->prog_bar_copy->setValue(val);
+}

@@ -23,13 +23,18 @@ public:
     void SetTargetUsedSpace(const float &bytes);
     void SetTargetFreeSpace(const float &bytes);
     void SetTargetFillSpace(const float &bytes);
+    void SetMainThreadBusy(const bool &flag);
+    void SetListStatusBarVisible(const bool &flag);
+    void SetListStatusBarValue(const int &val);
+    void SetCopyStatusBarVisible(const bool &flag);
+    void SetCopyStatusBarValue(const int &val);
 
 signals:
     void GUICreateCopyList();
     void GUICopyList();
-    void GUISourceDirChanged(std::string dir);
-    void GUITargetDirChanged(std::string dir);
-    void GUIFillPercentOfFree(QString percent);
+    void GUISourceDirChanged(const std::string dir);
+    void GUITargetDirChanged(const std::string dir);
+    void GUIFillPercentOfFree(const QString percent);
 
 private:
     QIntValidator *val_int_;

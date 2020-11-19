@@ -7,6 +7,7 @@
 #include <filetransfer.h>
 #include <format.h>
 #include <QObject>
+#include <QtGui>
 
 #include <iostream>
 
@@ -27,6 +28,8 @@ private slots:
     void GUIFillPercentOfFree(const QString percent);
     void CreateCopylist();
     void CopyList();
+    void ReceiveListStatus(const float &size);
+    void ReceiveCopyStatus(const float &size);
 
 private:
 

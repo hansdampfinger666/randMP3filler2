@@ -2,18 +2,18 @@
 
 
 void FileTransfer::SetCopyList(const std::string &source_path, const std::string &target_path, const int file_depth)
-{
+{    
     std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
 
     file_depth_ = file_depth;
 
     Benchmark::StartBenchmark();
-    std::string meth_name = "GetExistingTargetFolders";
-    Benchmark::StartClock(this, meth_name);
+    std::string meth = "GetExistingTargetFolders";
+    Benchmark::StartClock(this, meth);
 
     existing_target_folders_ = GetExistingFolders(target_path);
 
-    Benchmark::StopClock(this, meth_name);
+    Benchmark::StopClock(this, meth);
 
     if(randomizer_ == nullptr)
         randomizer_ = new Random;
@@ -28,17 +28,17 @@ void FileTransfer::SetCopyList(const std::string &source_path, const std::string
 
         for(int i = 0; i < file_depth_ - 1; i++)
         {
-            meth_name = "CountSubfolders";
-            Benchmark::StartClock(this, meth_name);
+            meth = "CountSubfolders";
+            Benchmark::StartClock(this, meth);
             if(dir == source_path)
                 dir_qty = top_dir_qty;
             else
                 dir_qty = CountSubfolders(dir);
-            Benchmark::StopClock(this, meth_name);
+            Benchmark::StopClock(this, meth);
             int subdir_id;
 
-            meth_name = "GetRandom";
-            Benchmark::StartClock(randomizer_, meth_name);
+            meth = "GetRandom";
+            Benchmark::StartClock(randomizer_, meth);
             if(dir_qty == 0)
                 break;
             else if(dir_qty == 1)
@@ -46,17 +46,18 @@ void FileTransfer::SetCopyList(const std::string &source_path, const std::string
             else
                 subdir_id = randomizer_->GetRandom(0, dir_qty - 1);
 
-            Benchmark::StopClock(randomizer_, meth_name);
+            Benchmark::StopClock(randomizer_, meth);
 
-            meth_name = "GetSubPathNameByIndex";
-            Benchmark::StartClock(this, meth_name);
-            dir = GetSubPathNameByIndex(dir, subdir_id);    
-            Benchmark::StopClock(this, meth_name);
+            meth = "GetSubPathNameByIndex";
+            Benchmark::StartClock(this, meth);
+            dir = GetSubPathNameByIndex(dir, subdir_id);
+
+            Benchmark::StopClock(this, meth);
 
             if(dir != "" and i + 1 == file_depth_ - 1)
             {
-                meth_name = "DuplicateChecks";
-                Benchmark::StartClock(this, meth_name);
+                meth = "DuplicateChecks";
+                Benchmark::StartClock(this, meth);
                 if(FolderExistsInTarget(dir))
                 {
                     folders_.exists_in_target_hits++;
@@ -67,11 +68,11 @@ void FileTransfer::SetCopyList(const std::string &source_path, const std::string
                     folders_.duplicate_hits++;
                     break;
                 }
-                Benchmark::StopClock(this, meth_name);
-                meth_name = "GetFileSizesInFolder";
-                Benchmark::StartClock(this, meth_name);
+                Benchmark::StopClock(this, meth);
+                meth = "GetFileSizesInFolder";
+                Benchmark::StartClock(this, meth);
                 float folder_size = GetFileSizesInFolder(dir);
-                Benchmark::StopClock(this, meth_name);
+                Benchmark::StopClock(this, meth);
                 if(folders_.total_size + folder_size <= copy_size_ and folder_size > 0
                         and FolderContainsFiles(dir))
                 {
@@ -93,7 +94,7 @@ void FileTransfer::SetCopyList(const std::string &source_path, const std::string
 
 
 std::vector<std::string> FileTransfer::GetExistingFolders(const std::string &path)
-{
+{   
     std::vector<std::string> paths;
     paths.push_back(path);
 

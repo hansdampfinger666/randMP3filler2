@@ -1,8 +1,9 @@
-#ifndef ERROR_H
+﻿#ifndef ERROR_H
 #define ERROR_H
 
 #include <string>
 #include <iostream>
+#include <typeinfo>
 
 class Error
 {
@@ -14,8 +15,7 @@ public:
         std::string message;
     } Data;
 
-    template<typename T>
-    static int LogOne(const int code, const T *caller, const std::string &method_name, const std::string &message){
+    static int LogOne(const int code, const std::string &caller, const std::string &method_name, const std::string &message){
         ResetData();
         if(verbose_logging_active_)
             data_ = { code, typeid(caller).name(), method_name, message };

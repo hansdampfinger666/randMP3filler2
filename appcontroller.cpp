@@ -10,6 +10,7 @@ AppController::AppController(MainWindow *mainwindow)
         SetupDirectories(false);
     else
         SetupDirectories(true);
+    Serialize::ImportData(ec, filetransfer_, last_filelist);
 }
 
 
@@ -126,6 +127,8 @@ void AppController::CopyList()
     filetransfer_.TransferFiles(dirs_.GetDirPath(target_dir_id_));
     mainwindow_->SetMainThreadBusy(false);
     mainwindow_->SetCopyStatusBarValue(100);
+    int ec;
+    Serialize::ExportData(ec, filetransfer_, last_filelist);
 }
 
 

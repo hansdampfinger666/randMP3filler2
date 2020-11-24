@@ -3,13 +3,11 @@
 
 #include <QObject>
 #include <QDir>
-
 #include <vector>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-//#include <cereal/archives/binary.hpp>
-#include "error.h"
+#include <error.h>
 
 
 class Config : public QObject
@@ -23,13 +21,13 @@ public:
     } Params;
 
     Config();
-    int AddParam(const std::string param_token);
+    int AddParam(const std::string &param_token);
     void ReadConfig(int &ec);
     const std::string GetParam(const int param_index);
 
 
 private:
-    inline static const std::string file_name_lnx_ = "/config";
+    static constexpr const char file_name_lnx_[] = "/config";
     std::string path_;
     Params params_;
 

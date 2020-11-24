@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <appcontroller.h>
 #include <QApplication>
+#include <serialize.h>
 
 int main(int argc, char *argv[])
 {

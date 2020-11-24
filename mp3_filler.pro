@@ -27,7 +27,8 @@ HEADERS += \
     filetransfer.h \
     format.h \
     mainwindow.h \
-    random.h
+    random.h \
+    serialize.h
 
 FORMS += \
     mainwindow.ui

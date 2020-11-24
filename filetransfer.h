@@ -8,6 +8,7 @@
 #include <random.h>
 #include <vector>
 #include <chrono>
+#include <cereal/access.hpp>
 
 #include <benchmark.h>
 
@@ -42,7 +43,7 @@ private:
     Folders folders_ { 0, 0, 0, 0, 0, 0, {}, {} };
     Random *randomizer_ = nullptr;
     float copy_size_ = 0;
-    int file_depth_ = 1;    //built for minimum file depth of 2: root/folder_depth=1/file_depth=2
+    int file_depth_ = 1;    //built for minimum file depth of 2: root=0/folder_depth=1/file_depth=2
     std::vector<std::string> existing_target_folders_;
 
     std::vector<std::string> GetExistingFolders(const std::string &path);
@@ -56,6 +57,9 @@ private:
     bool IsDuplicateFolder(const std::string &path);
     void PrintTransferList();
 
+    friend class cereal::access;
+    template<class Archive>
+    void serialize(Archive &ar){ ar(folders_.paths); };
 };
 
 #endif // FILES_H

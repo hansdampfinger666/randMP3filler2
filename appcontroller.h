@@ -1,14 +1,14 @@
 #ifndef APPCONTROLLER_H
 #define APPCONTROLLER_H
 
+#include <QObject>
+#include <QtGui>
 #include <mainwindow.h>
 #include <config.h>
 #include <directories.h>
 #include <filetransfer.h>
+#include <serialize.h>
 #include <format.h>
-#include <QObject>
-#include <QtGui>
-
 #include <iostream>
 
 
@@ -43,6 +43,8 @@ private:
     int source_drive_id_;
     int target_drive_id_;
     inline static const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
+    inline static const std::string last_filelist = "last_filelist";
+    inline static const std::string last_appsetup = "last_appsetup";
 
     void SetupMainwindow(MainWindow *mainwindow);
     void SetupConfig(int &ec);

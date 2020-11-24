@@ -20,14 +20,14 @@ public:
     ~MainWindow();
     void SetSourceLabel(const std::string &txt);
     void SetTargetLabel(const std::string &txt);  
-    void SetTargetUsedSpace(const float &bytes);
-    void SetTargetFreeSpace(const float &bytes);
-    void SetTargetFillSpace(const float &bytes);
-    void SetMainThreadBusy(const bool &flag);
-    void SetListStatusBarVisible(const bool &flag);
-    void SetListStatusBarValue(const int &val);
-    void SetCopyStatusBarVisible(const bool &flag);
-    void SetCopyStatusBarValue(const int &val);
+    void SetTargetUsedSpace(const float bytes);
+    void SetTargetFreeSpace(const float bytes);
+    void SetTargetFillSpace(const float bytes);
+    void SetMainThreadBusy(const bool flag);
+    void SetListStatusBarVisible(const bool flag);
+    void SetListStatusBarValue(const int val);
+    void SetCopyStatusBarVisible(const bool flag);
+    void SetCopyStatusBarValue(const int val);
 
 signals:
     void GUICreateCopyList();
@@ -38,7 +38,6 @@ signals:
 
 private:
     QIntValidator *val_int_;
-
     Ui::MainWindow *ui;
     QString source_dir_;
     QString target_dir_;

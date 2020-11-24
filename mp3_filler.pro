@@ -20,8 +20,10 @@ SOURCES += \
 
 HEADERS += \
     appcontroller.h \
+    benchmark.h \
     config.h \
     directories.h \
+    error.h \
     filetransfer.h \
     format.h \
     mainwindow.h \

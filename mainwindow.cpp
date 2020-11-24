@@ -25,8 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->edit_prc_fill_up->setValidator(val_int_);
 }
 
-MainWindow::~MainWindow(){ delete ui; }
-
 
 void MainWindow::SetSourceLabel(const std::string &txt)
 {
@@ -55,28 +53,28 @@ std::string MainWindow::DirectoryDialog(const QString &initial_dir)
 }
 
 
-void MainWindow::SetTargetUsedSpace(const float &bytes)
+void MainWindow::SetTargetUsedSpace(const float bytes)
 {
     std::string txt = Format::GetReadableBytes(bytes);
     this->ui->used->setText(QString::fromStdString(txt));
 }
 
 
-void MainWindow::SetTargetFreeSpace(const float &bytes)
+void MainWindow::SetTargetFreeSpace(const float bytes)
 {
     std::string txt = Format::GetReadableBytes(bytes);
     this->ui->free->setText(QString::fromStdString(txt));
 }
 
 
-void MainWindow::SetTargetFillSpace(const float &bytes)
+void MainWindow::SetTargetFillSpace(const float bytes)
 {
     std::string txt = Format::GetReadableBytes(bytes);
     this->ui->fill_space->setText(QString::fromStdString(txt));
 }
 
 
-void MainWindow::SetMainThreadBusy(const bool &flag)
+void MainWindow::SetMainThreadBusy(const bool flag)
 {
     if(flag)
         QGuiApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -85,25 +83,31 @@ void MainWindow::SetMainThreadBusy(const bool &flag)
 }
 
 
-void MainWindow::SetListStatusBarVisible(const bool &flag)
+void MainWindow::SetListStatusBarVisible(const bool flag)
 {
     this->ui->prog_bar_list->setVisible(flag);
 }
 
 
-void MainWindow::SetListStatusBarValue(const int &val)
+void MainWindow::SetListStatusBarValue(const int val)
 {
     this->ui->prog_bar_list->setValue(val);
 }
 
 
-void MainWindow::SetCopyStatusBarVisible(const bool &flag)
+void MainWindow::SetCopyStatusBarVisible(const bool flag)
 {
     this->ui->prog_bar_copy->setVisible(flag);
 }
 
 
-void MainWindow::SetCopyStatusBarValue(const int &val)
+void MainWindow::SetCopyStatusBarValue(const int val)
 {
     this->ui->prog_bar_copy->setValue(val);
+}
+
+
+MainWindow::~MainWindow()
+{
+    delete ui;
 }

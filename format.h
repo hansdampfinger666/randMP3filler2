@@ -7,8 +7,8 @@
 class Format
 {
 public:
-    static std::string GetReadableBytes(const float &bytes);
-    static std::string GetReadableNanoSec(const float &nanosec);
+    static std::string GetReadableBytes(const float bytes);
+    static std::string GetReadableNanoSec(const float nanosec);
 
 private:
     static constexpr float b_kb_ = 0.001f;

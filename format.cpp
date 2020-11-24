@@ -1,6 +1,6 @@
 #include "format.h"
 
-std::string Format::GetReadableBytes(const float &bytes)
+std::string Format::GetReadableBytes(const float bytes)
 {
     float size = 0.0f;
     std::string suffix;
@@ -38,7 +38,7 @@ std::string Format::GetReadableBytes(const float &bytes)
 }
 
 
-std::string Format::GetReadableNanoSec(const float &nanosec)
+std::string Format::GetReadableNanoSec(const float nanosec)
 {
     float time = 0.0f;
     std::string suffix;

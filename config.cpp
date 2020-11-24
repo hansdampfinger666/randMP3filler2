@@ -7,7 +7,7 @@ Config::Config()
 }
 
 
-int Config::AddParam(const std::string &param_token)
+int Config::AddParam(const std::string param_token)
 {
     params_.tokens.push_back(param_token);
     params_.values.push_back("");
@@ -15,10 +15,13 @@ int Config::AddParam(const std::string &param_token)
 }
 
 
-bool Config::ReadConfig()
+void Config::ReadConfig(int &ec)
 {    
     if(not std::filesystem::exists(path_) or params_.tokens.size() == 0)
-        return false;
+    {
+        ec = Error::LogOne(1, this, __func__, "Config file does not exist or no parameter tokens were defined");
+        return;
+    }
 
     std::ifstream data(path_);
     std::string line;
@@ -32,8 +35,7 @@ bool Config::ReadConfig()
             if(line.find(params_.tokens.at(i)) == 0)
                 params_.values.at(i) = line.substr(params_.tokens.at(i).size(), line.size() - params_.tokens.at(i).size());
     }
-    return
-            true;
+    ec = Error::SetOkay();
 }
 
 
@@ -56,9 +58,9 @@ void Config::Trim(std::string &str)
 }
 
 
-const std::string Config::GetParam(const int &param_index)
+const std::string Config::GetParam(const int param_index)
 {
-    if(param_index > params_.values.size())
+    if(param_index > (int)params_.values.size())
         return {""};
     return params_.values.at(param_index);
 }

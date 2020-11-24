@@ -1,61 +1,82 @@
 #include "filetransfer.h"
 
 
-void FileTransfer::SetCopyList(const std::string &source_path, const int &file_depth)
+void FileTransfer::SetCopyList(const std::string &source_path, const std::string &target_path, const int file_depth)
 {
+    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+
     file_depth_ = file_depth;
+
+    Benchmark::StartBenchmark();
+    std::string meth_name = "GetExistingTargetFolders";
+    Benchmark::StartClock(this, meth_name);
+
+    existing_target_folders_ = GetExistingFolders(target_path);
+
+    Benchmark::StopClock(this, meth_name);
 
     if(randomizer_ == nullptr)
         randomizer_ = new Random;
 
-    std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+    int top_dir_qty = CountSubfolders(source_path);
 
-    while(folders_.total_size < copy_size_ - 100000000)
-        // 100 mb landing zone, size depends on source folder sizes we're dealing with
-        // too small -> excessive recursions
-        // too large -> excessive deviation from user intent
+    while(folders_.total_size < copy_size_ - 100000000) // 100 mb landing zone
     {
+        folders_.iterations++;
         std::string dir = source_path;
+        int dir_qty = 0;
 
-        for(int i = 0; i < file_depth - 1; i++)
+        for(int i = 0; i < file_depth_ - 1; i++)
         {
-            int dir_qty = CountSubfolders(dir);
-            int randomizer_id;
+            meth_name = "CountSubfolders";
+            Benchmark::StartClock(this, meth_name);
+            if(dir == source_path)
+                dir_qty = top_dir_qty;
+            else
+                dir_qty = CountSubfolders(dir);
+            Benchmark::StopClock(this, meth_name);
             int subdir_id;
 
+            meth_name = "GetRandom";
+            Benchmark::StartClock(randomizer_, meth_name);
             if(dir_qty == 0)
                 break;
             else if(dir_qty == 1)
                 subdir_id = 1;
             else
-            {
-                randomizer_id = randomizer_->GetRandomizer(0, dir_qty - 1);
-                if(randomizer_id == -1)
-                    randomizer_id = randomizer_->NewRandomizer(0, dir_qty - 1);
-                subdir_id = randomizer_->GetRandom(randomizer_id);
-            }
-            dir = GetSubPathNameByIndex(dir, subdir_id);    
+                subdir_id = randomizer_->GetRandom(0, dir_qty - 1);
 
-            if(dir != "" and i + 1 == file_depth - 1)
+            Benchmark::StopClock(randomizer_, meth_name);
+
+            meth_name = "GetSubPathNameByIndex";
+            Benchmark::StartClock(this, meth_name);
+            dir = GetSubPathNameByIndex(dir, subdir_id);    
+            Benchmark::StopClock(this, meth_name);
+
+            if(dir != "" and i + 1 == file_depth_ - 1)
             {
-                // if folder is duplicate, get new one, the lesser the diff between available source
-                // folders and target space is, the more this will be likely to trigger and the
-                // more we need to think about implementing a different randomizing technique
-                // because the runtime will increase unacceptably
+                meth_name = "DuplicateChecks";
+                Benchmark::StartClock(this, meth_name);
+                if(FolderExistsInTarget(dir))
+                {
+                    folders_.exists_in_target_hits++;
+                    break;
+                }
                 if(IsDuplicateFolder(dir))
                 {
                     folders_.duplicate_hits++;
                     break;
                 }
-
+                Benchmark::StopClock(this, meth_name);
+                meth_name = "GetFileSizesInFolder";
+                Benchmark::StartClock(this, meth_name);
                 float folder_size = GetFileSizesInFolder(dir);
+                Benchmark::StopClock(this, meth_name);
                 if(folders_.total_size + folder_size <= copy_size_ and folder_size > 0
                         and FolderContainsFiles(dir))
                 {
                     folders_.qty++;
                     folders_.total_size += folder_size;
-                    // size of std::string (dir) seems to be 32 bytes, std::filesystem::path object
-                    // is 40 bytes, so save string and generate path object as it is useful/needed
                     folders_.paths.push_back(dir);
                     folders_.sizes.push_back(folder_size);
                     emit ReportListStatus(folders_.total_size);
@@ -66,24 +87,79 @@ void FileTransfer::SetCopyList(const std::string &source_path, const int &file_d
     std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
     folders_.runtime = std::chrono::duration_cast<std::chrono::nanoseconds> (end - start).count();
 
+    Benchmark::EndBenchmark();
     PrintTransferList();
+}
+
+
+std::vector<std::string> FileTransfer::GetExistingFolders(const std::string &path)
+{
+    std::vector<std::string> paths;
+    paths.push_back(path);
+
+    for(int i = 0; i < file_depth_ - 1; i++)
+        paths = GetAllSubPathNames(paths);
+    return paths;
+}
+
+
+std::vector<std::string> FileTransfer::GetAllSubPathNames(const std::vector<std::string> &paths)
+{
+    std::vector<std::string> paths_out;
+    for(auto &path : paths)
+        for(auto &subfolder : std::filesystem::directory_iterator(path))
+            if(std::filesystem::is_directory(subfolder))
+                paths_out.push_back(subfolder.path());
+    return paths_out;
+}
+
+
+bool FileTransfer::FolderExistsInTarget(const std::string &path)
+{
+    int drill_up_depth = file_depth_ - 2;
+    std::vector<std::string> folder_struct_source, folder_struct_target;
+
+    folder_struct_source = DrillUpPath(path, drill_up_depth);
+
+    for(auto &target : existing_target_folders_)
+    {
+        folder_struct_target = DrillUpPath(target, drill_up_depth);
+        if(folder_struct_source == folder_struct_target)
+            return true;
+    }
+    return false;
+}
+
+
+std::vector<std::string> FileTransfer::DrillUpPath(const std::string &path, const int drill_up_depth)
+{
+        std::vector<std::string> folder_struct(drill_up_depth + 1);
+        auto path_o = std::filesystem::path(path);
+        folder_struct.at(0) = path_o.filename();
+
+        for(int i = 1; i <= drill_up_depth; i++)
+        {
+            path_o = path_o.parent_path();
+            folder_struct.at(i) = path_o.filename();
+        }
+        return folder_struct;
 }
 
 
 int FileTransfer::CountSubfolders(const std::string &path)
 {
     int subfolders = 0;
-    for(auto subfolder : std::filesystem::directory_iterator(path))
+    for(auto &subfolder : std::filesystem::directory_iterator(path))
         if(std::filesystem::is_directory(subfolder))
             subfolders++;
     return subfolders;
 }
 
 
-std::string FileTransfer::GetSubPathNameByIndex(const std::string &root_path, const int &id)
+std::string FileTransfer::GetSubPathNameByIndex(const std::string &root_path, const int id)
 {
     int i = 0;
-    for(auto path : std::filesystem::directory_iterator(root_path))
+    for(auto &path : std::filesystem::directory_iterator(root_path))
         if(std::filesystem::is_directory(path))
         {
             if(i == id)
@@ -100,7 +176,7 @@ float FileTransfer::GetFileSizesInFolder(const std::string &path)
     if(not std::filesystem::is_directory(path))
         return size;
 
-    for(auto file : std::filesystem::directory_iterator(path))
+    for(auto &file : std::filesystem::directory_iterator(path))
         if(std::filesystem::is_regular_file(file))
                 size += file.file_size();
     return size;
@@ -112,7 +188,7 @@ bool FileTransfer::FolderContainsFiles(const std::string &path)
     if(not std::filesystem::is_directory(path))
         return false;;
 
-    for(auto file : std::filesystem::directory_iterator(path))
+    for(auto &file : std::filesystem::directory_iterator(path))
         if(std::filesystem::is_regular_file(file))
             return true;
     return false;
@@ -135,7 +211,7 @@ void FileTransfer::TransferFiles(const std::string &target_path)
     int copied_size = 0;
     int index = 0;
 
-    for(auto folder : folders_.paths)
+    for(auto &folder : folders_.paths)
     {
         auto path = std::filesystem::path(folder);
         folder_struct.at(0) = path;
@@ -161,7 +237,7 @@ void FileTransfer::TransferFiles(const std::string &target_path)
 
 void FileTransfer::ResetTransferList()
 {
-    folders_ = { 0, 0, 0, 0, {}, {} };
+    folders_ = { 0, 0, 0, 0, 0, 0, {}, {} };
 }
 
 
@@ -181,6 +257,8 @@ void FileTransfer::PrintTransferList()
                  "FILE DEPTH: " << file_depth_ << std::endl <<
                  "TOTAL SIZE: " << Format::GetReadableBytes(folders_.total_size) << std::endl <<
                  "DUPLIACTE HITS: " << folders_.duplicate_hits << std::endl <<
+                 "ALREADY IN TARGET HITS: " << folders_.exists_in_target_hits << std::endl <<
+                 "ITERATIONS: " << folders_.iterations << std::endl <<
                  "EXECUTION TIME: " << Format::GetReadableNanoSec(folders_.runtime) << std::endl <<
                  "______________" << std::endl;
 }

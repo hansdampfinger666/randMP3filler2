@@ -8,6 +8,8 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+//#include <cereal/archives/binary.hpp>
+#include "error.h"
 
 
 class Config : public QObject
@@ -15,22 +17,21 @@ class Config : public QObject
     Q_OBJECT
 
 public:
-
     typedef struct{
       std::vector<std::string> tokens;
       std::vector<std::string> values;
-    } params;
+    } Params;
 
     Config();
-    int AddParam(const std::string &param_token);
-    bool ReadConfig();
-    const std::string GetParam(const int &param_index);
+    int AddParam(const std::string param_token);
+    void ReadConfig(int &ec);
+    const std::string GetParam(const int param_index);
+
 
 private:
-
-    const std::string file_name_lnx_ = "/config";
+    inline static const std::string file_name_lnx_ = "/config";
     std::string path_;
-    params params_;
+    Params params_;
 
     bool ValidateConfigLine(std::string &line);
     void Trim(std::string &str);

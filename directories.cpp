@@ -1,5 +1,4 @@
 #include "directories.h"
-#include <iostream>
 
 
 int Directories::AddDirectory()
@@ -10,9 +9,9 @@ int Directories::AddDirectory()
 }
 
 
-bool Directories::SetDirectoryPath(const int &id, const std::string &path)
+bool Directories::SetDirectoryPath(const int id, const std::string &path)
 {
-    if(id > dirs_.paths.size() or id < 0 or !std::filesystem::exists(path) or not std::filesystem::is_directory(path))
+    if(id > (int)dirs_.paths.size() or id < 0 or !std::filesystem::exists(path) or not std::filesystem::is_directory(path))
         return false;
     dirs_.paths.at(id) = path;
     dirs_.drive_ids.at(id) = SetDrive(path);
@@ -39,49 +38,48 @@ int Directories::SetDrive(const std::string &path)
 }
 
 
-std::string Directories::GetDirPath(const int &dir_id)
+std::string Directories::GetDirPath(const int dir_id)
 {
     return dirs_.paths.at(dir_id);
 }
 
 
-int Directories::GetDriveToDir(const int &dir_id)
+int Directories::GetDriveToDir(const int dir_id)
 {
     return dirs_.drive_ids.at(dir_id);
 }
 
 
-float Directories::GetDriveUsedSpace(const int &dir_id)
+float Directories::GetDriveUsedSpace(const int dir_id)
 {
     int drive_id = dirs_.drive_ids.at(dir_id);
     return drives_.sizes_used.at(drive_id);
 }
 
 
-float Directories::GetDriveFreeSpace(const int &dir_id)
+float Directories::GetDriveFreeSpace(const int dir_id)
 {
     int drive_id = dirs_.drive_ids.at(dir_id);
     return drives_.sizes_free.at(drive_id);
 }
 
 
-float Directories::GetDriveTotalSpace(const int &dir_id)
+float Directories::GetDriveTotalSpace(const int dir_id)
 {
     int drive_id = dirs_.drive_ids.at(dir_id);
     return drives_.sizes_total.at(drive_id);
 }
 
 
-
 void Directories::PrintAllDrives()
 {
     for(unsigned int i = 0; i < drives_.names.size(); i++)
     {
-//        std::cout << "Drive " << drives_.names.at(i).toStdString() << std::endl;
-//        std::cout << "TiB total: " << drives_.sizes_total.at(i) * byte_tib_ << std::endl;
-//        std::cout << "TiB free: "  << drives_.sizes_free.at(i) * byte_tib_ << std::endl;
-//        std::cout << "GiB total: " << drives_.sizes_total.at(i) * byte_gib_ << std::endl;
-//        std::cout << "GiB free: "  << drives_.sizes_free.at(i) * byte_gib_ << std::endl;
-//        std::cout << "__________"  << std::endl;
+        std::cout << "Drive " << drives_.names.at(i).toStdString() << std::endl;
+        std::cout << "TiB total: " << Format::GetReadableBytes(drives_.sizes_total.at(i)) << std::endl;
+        std::cout << "TiB free: "  << Format::GetReadableBytes(drives_.sizes_free.at(i)) << std::endl;
+        std::cout << "GiB total: " << Format::GetReadableBytes(drives_.sizes_total.at(i)) << std::endl;
+        std::cout << "GiB free: "  << Format::GetReadableBytes(drives_.sizes_free.at(i)) << std::endl;
+        std::cout << "__________"  << std::endl;
     }
 }

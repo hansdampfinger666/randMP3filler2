@@ -1,6 +1,7 @@
 #ifndef DIRECTORY_H
 #define DIRECTORY_H
 
+#pragma once
 #include <QObject>
 #include <QStorageInfo>
 #include <filesystem>

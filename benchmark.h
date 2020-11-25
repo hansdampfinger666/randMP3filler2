@@ -1,6 +1,7 @@
 #ifndef BENCHMARK_H
 #define BENCHMARK_H
 
+#pragma once
 #include <vector>
 #include <string>
 #include <chrono>

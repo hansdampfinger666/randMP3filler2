@@ -1,6 +1,7 @@
 #ifndef FILES_H
 #define FILES_H
 
+#pragma once
 #include <QObject>
 #include <format.h>
 #include <filesystem>

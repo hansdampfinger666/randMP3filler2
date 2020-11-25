@@ -1,6 +1,7 @@
 #ifndef SERIALIZE_H
 #define SERIALIZE_H
 
+#pragma once
 #include <error.h>
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/vector.hpp>

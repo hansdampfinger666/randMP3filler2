@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#pragma once
 #include <format.h>
 #include <QMainWindow>
 #include <QFileDialog>

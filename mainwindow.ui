@@ -252,7 +252,19 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionApplication_Options"/>
+   </widget>
+   <addaction name="menuOptions"/>
   </widget>
+  <action name="actionApplication_Options">
+   <property name="text">
+    <string>Application Options</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

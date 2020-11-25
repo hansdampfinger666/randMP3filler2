@@ -1,6 +1,7 @@
 #ifndef APPCONTROLLER_H
 #define APPCONTROLLER_H
 
+#pragma once
 #include <QObject>
 #include <QtGui>
 #include <mainwindow.h>

@@ -1,6 +1,7 @@
 #ifndef FORMAT_H
 #define FORMAT_H
 
+#pragma once
 #include <string>
 #include <sstream>
 

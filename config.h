@@ -1,6 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#pragma once
 #include <QObject>
 #include <QDir>
 #include <vector>

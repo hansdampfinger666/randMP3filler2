@@ -252,7 +252,8 @@ void FileTransfer::PrintTransferList()
 //                    "relative_path: " << std::filesystem::path(folders_.paths.at(i)).relative_path() << std::endl <<
 //                    "parent_path: " << std::filesystem::path(folders_.paths.at(i)).parent_path() << std::endl <<
 //                    "file_name: " << std::filesystem::path(folders_.paths.at(i)).filename() << std::endl <<
-//                    "stem: " << std::filesystem::path(folders_.paths.at(i)).stem() << std::endl;
+//                    "stem: " <<#pragma once
+// std::filesystem::path(folders_.paths.at(i)).stem() << std::endl;
     std::cout << "______________" << std::endl <<
                  "NUMBER DIRS TO COPY: " << folders_.qty << std::endl <<
                  "FILE DEPTH: " << file_depth_ << std::endl <<

@@ -21,4 +21,5 @@ ToDo
 - save last transfer lists and provide options to avoid duplicates in comparison to old lists
 - add console like log
 - add bottom status bar to display latest log entry
+- fix bug: root folder with empty folders in it stuck in endless loop to try to fill list, needs hard retry barriers
 */

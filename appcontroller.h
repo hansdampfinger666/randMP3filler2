@@ -43,9 +43,9 @@ private:
     int target_dir_id_;
     int source_drive_id_;
     int target_drive_id_;
-    inline static const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
-    inline static const std::string last_filelist = "last_filelist";
-    inline static const std::string last_appsetup = "last_appsetup";
+    const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
+    const std::string last_filelist = "last_filelist";
+    const std::string last_appsetup = "last_appsetup";
 
     void SetupMainwindow(MainWindow *mainwindow);
     void SetupConfig(int &ec);

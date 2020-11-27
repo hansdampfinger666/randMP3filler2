@@ -63,7 +63,8 @@ void AppController::SetupDirectories(bool use_config)
         source_path = std::filesystem::current_path();
         target_path = std::filesystem::current_path();
     }
-    dirs_.SetDirectoryPath(source_dir_id_, source_path);
+//    dirs_.SetDirectoryPath(source_dir_id_, source_path);
+    dirs_.SetDirectoryPath(source_dir_id_, "/run/media/al/6238-6233/MUSIC/");
     dirs_.SetDirectoryPath(target_dir_id_, target_path);
 }
 
@@ -112,9 +113,10 @@ void AppController::GUIFillPercentOfFree(const QString &percent)
 
 void AppController::CreateCopylist()
 {
+//    /home/al/Documents/qt_test/
     mainwindow_->SetMainThreadBusy(true);
     mainwindow_->SetListStatusBarVisible(true);
-    filetransfer_.SetCopyList(dirs_.GetDirPath(source_dir_id_), dirs_.GetDirPath(target_dir_id_), 3);
+    filetransfer_.SetCopyList(dirs_.GetDirPath(source_dir_id_), dirs_.GetDirPath(target_dir_id_), 3, false);
     mainwindow_->SetMainThreadBusy(false);
     mainwindow_->SetListStatusBarValue(100);
 }

@@ -28,7 +28,7 @@ public:
 
 
 private:
-    static constexpr const char file_name_lnx_[] = "/config";
+    const char file_name_lnx_[8] = "/config";
     std::string path_;
     Params params_;
 

@@ -12,9 +12,16 @@ void FileTransfer::SetCopyList(const std::string &source_path, const std::string
         randomizer_ = new Random;
 
     int top_dir_qty = CountSubfolders(source_path);
+    float total_size_old, total_size_new = 0;
+    int iterations_without_change = 0;
 
-    while(folders_.total_size < copy_size_ - 100000000) // 100 mb landing zone
+    while(folders_.total_size < copy_size_ - 100000000
+          and iterations_without_change < 20) // 100 mb landing zone
     {
+        total_size_old = folders_.total_size;
+        if(total_size_new == total_size_new)
+            iterations_without_change++;
+
         folders_.iterations++;
         std::string dir = source_path;
         int dir_qty = 0;
@@ -64,6 +71,7 @@ void FileTransfer::SetCopyList(const std::string &source_path, const std::string
                     folders_.total_size += folder_size;
                     folders_.paths.push_back(dir);
                     folders_.sizes.push_back(folder_size);
+                    total_size_new = folder_size;
                     emit ReportListStatus(folders_.total_size);
                 }
             }

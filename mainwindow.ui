@@ -256,11 +256,11 @@
     <property name="title">
      <string>Options</string>
     </property>
-    <addaction name="actionApplication_Options"/>
+    <addaction name="act_app_options"/>
    </widget>
    <addaction name="menuOptions"/>
   </widget>
-  <action name="actionApplication_Options">
+  <action name="act_app_options">
    <property name="text">
     <string>Application Options</string>
    </property>

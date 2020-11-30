@@ -3,6 +3,7 @@
 
 #pragma once
 #include <format.h>
+#include <appoptions.h>
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QIntValidator>
@@ -38,11 +39,12 @@ signals:
     void GUIFillPercentOfFree(const QString percent);
 
 private:
-    QIntValidator *val_int_;
     Ui::MainWindow *ui;
+    AppOptions app_options_;
     QString source_dir_;
     QString target_dir_;
 
     std::string DirectoryDialog(const QString &initial_dir);
+    void OpenAppOptionsMenu();
 };
 #endif // MAINWINDOW_H

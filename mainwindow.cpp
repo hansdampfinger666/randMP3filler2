@@ -20,9 +20,11 @@ MainWindow::MainWindow(QWidget *parent)
                      this, [&]{ emit GUITargetDirChanged(DirectoryDialog(target_dir_)); });
     QObject::connect(this->ui->edit_prc_fill_up, &QLineEdit::editingFinished,
                      this, [&]{ emit GUIFillPercentOfFree(this->ui->edit_prc_fill_up->text()); });
+    QObject::connect(this->ui->act_app_options, &QAction::triggered,
+                     this, &MainWindow::OpenAppOptionsMenu);
 
-    val_int_ = new QIntValidator(this);
-    this->ui->edit_prc_fill_up->setValidator(val_int_);
+    QIntValidator val_int;
+    this->ui->edit_prc_fill_up->setValidator(&val_int);
 }
 
 
@@ -104,6 +106,16 @@ void MainWindow::SetCopyStatusBarVisible(const bool flag)
 void MainWindow::SetCopyStatusBarValue(const int val)
 {
     this->ui->prog_bar_copy->setValue(val);
+}
+
+
+void MainWindow::OpenAppOptionsMenu()
+{
+    app_options_.exec();
+    if(app_options_.OptionsChanged())
+        //serialize options
+
+    std::cout << "options menu opened" << std::endl;
 }
 
 

@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     appcontroller.cpp \
+    appoptions.cpp \
     config.cpp \
     directories.cpp \
     filetransfer.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 
 HEADERS += \
     appcontroller.h \
+    appoptions.h \
     benchmark.h \
     config.h \
     directories.h \
@@ -31,6 +33,7 @@ HEADERS += \
     serialize.h
 
 FORMS += \
+    appoptions.ui \
     mainwindow.ui
 
 # Default rules for deployment.

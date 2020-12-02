@@ -25,6 +25,7 @@ public:
         int last_list_duplicate_hits;
         int exists_in_target_hits;
         int iterations;
+        int iterations_without_size_chg;
         float total_size;
         float runtime;
         std::vector<std::string> paths;
@@ -43,7 +44,7 @@ signals:
     void ReportCopyStatus(const float size);
 
 private:
-    Folders folders_ { 0, 0, 0, 0, 0, 0, 0, {}, {} };
+    Folders folders_ { 0, 0, 0, 0, 0, 0, 0, 0, {}, {} };
     Random *randomizer_ = nullptr;
     float copy_size_ = 0;
     int file_depth_ = 1;    //built for minimum file depth of 2: root=0/folder_depth=1/file_depth=2

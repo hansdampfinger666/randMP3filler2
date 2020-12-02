@@ -16,24 +16,16 @@ public:
         std::string message;
     } Data;
 
-    static int LogOne(const int code, const std::string &caller, const std::string &method_name, const std::string &message){
-        ResetData();
-        if(verbose_logging_active_)
-            data_ = { code, typeid(caller).name(), method_name, message };
-        else
-            data_.code = code;
-        return code;
-    }
-    static int SetOkay(){ data_ = { 0, "", "", "" }; return 0; };
+    static int Log(const int code, const std::string &caller, const std::string &method, const std::string &message);
+    static int SetOkay();
     static void SetVerboseLogging(const bool flag){ verbose_logging_active_ = flag; };
-    static void CoutLatest(){ std::cout << "Error code: " << data_.code << " thrown by class: " << data_.class_name <<
-                                           " in method: " << data_.method_name << " with message : " << data_.message << std::endl; };
+    static void OutputLast();
 
 private:
     inline static Data data_ = { 0, "", "", "" };
     inline static bool verbose_logging_active_ = false;
 
-    static void ResetData(){ data_ = { 0, "", "", "" }; };
+    static void Reset();
 };
 
 #endif // ERROR_H

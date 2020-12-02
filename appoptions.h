@@ -2,8 +2,9 @@
 #define APPOPTIONS_H
 
 #pragma once
+#include "ui_appoptions.h"
 #include <QDialog>
-#include <cereal/access.hpp>
+#include <QCheckBox>
 
 namespace Ui {
 class AppOptions;
@@ -13,25 +14,13 @@ class AppOptions : public QDialog
 {
     Q_OBJECT
 
-public:
+public:   
     explicit AppOptions(QWidget *parent = nullptr);
     ~AppOptions();
-    bool OptionsChanged();
 
 private:
+    friend class MainWindow;
     Ui::AppOptions *ui;
-
-    bool options_changed_ = false;
-
-    struct Data{
-        bool respect_last_transfer_list;
-    } data_;
-
-    friend class cereal::access;
-    template<class Archive>
-    void save(Archive &ar) const { ar(data_); };
-    template<class Archive>
-    void load(Archive &ar){ ar(data_); }
 };
 
 #endif // APPOPTIONS_H

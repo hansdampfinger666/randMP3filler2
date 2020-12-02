@@ -17,6 +17,7 @@ public:
         data_.benchmark_name = benchmark_name;
         data_.benchmark_start = std::chrono::steady_clock::now();
     }
+
     static void EndBenchmark(bool output_file){
         data_.benchmark_end = std::chrono::steady_clock::now();
         data_.benchmark_runtime = std::chrono::duration_cast<std::chrono::nanoseconds>
@@ -25,12 +26,14 @@ public:
         if(output_file)
             OutputFile();
     }
+
     template<typename T>
     static void StartClock(T *caller, const std::string &method_name){
         std::string class_name = typeid(caller).name();
         int clock_index = GetClockIndex(class_name, method_name);
         data_.start.at(clock_index) = std::chrono::steady_clock::now();
     }
+
     template<typename T>
     static void StopClock(T *caller, const std::string &method_name){
         std::string class_name = typeid(caller).name();
@@ -40,6 +43,7 @@ public:
                 (data_.end.at(clock_index) - data_.start.at(clock_index)).count();
         data_.executions.at(clock_index)++;
     }
+
     static void ResetBenchmark(){
         data_ = { {}, 0, 0, {}, {}, {}, {}, {}, {}, {}, {}, {} };
     }
@@ -67,6 +71,7 @@ private:
                 return i;
         return AddClock(class_name, method_name);
     }
+
     static int AddClock(const std::string &class_name, const std::string &method_name){
         data_.class_names.push_back(class_name);
         data_.method_names.push_back(method_name);
@@ -78,6 +83,7 @@ private:
         data_.clock_instances++;
         return data_.clock_instances - 1;
     }
+
     static void OutputBenchmark(){
         SetBenchmarkTotals();
         for(int i = 0; i < data_.clock_instances; i++)
@@ -87,10 +93,12 @@ private:
         std::cout << "---------------------------" << std::endl <<
                      "TOTAL RUNTIME: " << Format::GetReadableNanoSec(data_.benchmark_runtime) << std::endl;
     }
+
     static void SetBenchmarkTotals(){
         for(int i = 0; i < data_.clock_instances; i++)
             data_.percentages_of_total.at(i) = data_.total_runtimes.at(i) / data_.benchmark_runtime * 100;
     }
+
     static void OutputFile(){
         std::string path = std::filesystem::current_path() /= "benchmark_" + data_.benchmark_name;
         std::ofstream ofs(path, std::ofstream::app);

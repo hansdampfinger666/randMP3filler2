@@ -5,28 +5,23 @@ std::string Format::GetReadableBytes(const float bytes)
     float size = 0.0f;
     std::string suffix;
 
-    if(bytes > 999999999999.0f)
-    {
+    if(bytes > 999999999999.0f){
         size = bytes * b_tb_;
         suffix = tb_;
     }
-    else if(bytes > 999999999.0f)
-    {
+    else if(bytes > 999999999.0f){
         size = bytes * b_gb_;
         suffix = gb_;
     }
-    else if(bytes > 999999.0f)
-    {
+    else if(bytes > 999999.0f){
         size = bytes * b_mb_;
         suffix = mb_;
     }
-    else if(bytes > 999.f)
-    {
+    else if(bytes > 999.f){
         size = bytes * b_kb_;
         suffix = kb_;
     }
-    else
-    {
+    else{
         size = bytes;
         suffix = b_;
     };
@@ -37,29 +32,23 @@ std::string Format::GetReadableBytes(const float bytes)
     return trunc.str() + suffix;
 }
 
-
-std::string Format::GetReadableNanoSec(const float nanosec)
-{
+std::string Format::GetReadableNanoSec(const float nanosec){
     float time = 0.0f;
     std::string suffix;
 
-    if(nanosec > 999999999.0f)
-    {
+    if(nanosec > 999999999.0f){
         time = nanosec * ns_s_;
         suffix = s_;
     }
-    else if(nanosec > 999999.0f)
-    {
+    else if(nanosec > 999999.0f){
         time = nanosec * ns_ms_;
         suffix = ms_;
     }
-    else if(nanosec > 999.0f)
-    {
+    else if(nanosec > 999.0f){
         time = nanosec * ns_us_;
         suffix = us_;
     }
-    else
-    {
+    else{
         time = nanosec;
         suffix = ns_;
     }

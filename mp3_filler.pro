@@ -8,11 +8,15 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+PRECOMPILED_HEADER = \
+    x_pch.h
+
 SOURCES += \
     appcontroller.cpp \
     appoptions.cpp \
     config.cpp \
     directories.cpp \
+    error.cpp \
     filetransfer.cpp \
     format.cpp \
     main.cpp \
@@ -30,7 +34,8 @@ HEADERS += \
     format.h \
     mainwindow.h \
     random.h \
-    serialize.h
+    serialize.h \
+    x_pch.h
 
 FORMS += \
     appoptions.ui \

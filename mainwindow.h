@@ -3,6 +3,7 @@
 
 #pragma once
 #include <format.h>
+#include <serialize.h>
 #include <appoptions.h>
 #include <QMainWindow>
 #include <QFileDialog>
@@ -18,6 +19,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void SetSourceLabel(const std::string &txt);
@@ -37,6 +39,8 @@ signals:
     void GUISourceDirChanged(const std::string dir);
     void GUITargetDirChanged(const std::string dir);
     void GUIFillPercentOfFree(const QString percent);
+    void GUIRespectLastTransferListChanged(const bool flag);
+    void GUIAppOptionsChanged();
 
 private:
     Ui::MainWindow *ui;
@@ -46,5 +50,6 @@ private:
 
     std::string DirectoryDialog(const QString &initial_dir);
     void OpenAppOptionsMenu();
+    void SendOptionsFromGUItoModel();
 };
 #endif // MAINWINDOW_H

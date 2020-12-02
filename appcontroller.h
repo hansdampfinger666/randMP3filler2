@@ -26,10 +26,12 @@ private slots:
     void GUISourceDirChanged(const std::string &dir);
     void GUITargetDirChanged(const std::string &dir);
     void GUIFillPercentOfFree(const QString &percent);
-    void CreateCopylist();
-    void CopyList();
+    void GUICreateCopylist();
+    void GUICopyList();
     void ReceiveListStatus(const float &size);
     void ReceiveCopyStatus(const float &size);
+    void GUIRespectLastTransferListChanged(const bool flag);
+    void GUIAppOptionsChanged();
 
 private:
     MainWindow *mainwindow_;
@@ -44,12 +46,15 @@ private:
     int source_drive_id_;
     int target_drive_id_;
     const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
-    const std::string last_filelist = "last_filelist";
-    const std::string last_appsetup = "last_appsetup";
+    const std::string last_filelist_ = "last_filelist";
+    const std::string last_appsetup_ = "last_appsetup";
+    const std::string ser_config_name_ = (std::string)"data/" + typeid(config_).name();
 
     void SetupMainwindow(MainWindow *mainwindow);
     void SetupConfig(int &ec);
     void SetupDirectories(bool use_config);
 };
+
+
 
 #endif // APPCONTROLLER_H

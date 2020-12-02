@@ -1,8 +1,7 @@
 #include "appcontroller.h"
 
 
-AppController::AppController(MainWindow *mainwindow)
-{
+AppController::AppController(MainWindow *mainwindow){
     int ec;
     SetupMainwindow(mainwindow);
     SetupConfig(ec);
@@ -10,17 +9,18 @@ AppController::AppController(MainWindow *mainwindow)
         SetupDirectories(false);
     else
         SetupDirectories(true);
-    Serialize::ImportData(ec, filetransfer_, last_filelist);
+    Serialize::ImportData(ec, filetransfer_, last_filelist_);
 }
 
 
-void AppController::SetupMainwindow(MainWindow *mainwindow)
-{
+void AppController::SetupMainwindow(MainWindow *mainwindow){
+
+    int ec = 0;
     mainwindow_ = mainwindow;
     QObject::connect(mainwindow_, &MainWindow::GUICreateCopyList,
-                     this, &AppController::CreateCopylist);
+                     this, &AppController::GUICreateCopylist);
     QObject::connect(mainwindow_, &MainWindow::GUICopyList,
-                     this, &AppController::CopyList);
+                     this, &AppController::GUICopyList);
     QObject::connect(mainwindow_, &MainWindow::GUISourceDirChanged,
                      this, &AppController::GUISourceDirChanged);
     QObject::connect(mainwindow_, &MainWindow::GUITargetDirChanged,
@@ -31,19 +31,32 @@ void AppController::SetupMainwindow(MainWindow *mainwindow)
                      this, &AppController::ReceiveListStatus);
     QObject::connect(&filetransfer_, &FileTransfer::ReportCopyStatus,
                      this, &AppController::ReceiveCopyStatus);
+    QObject::connect(mainwindow_, &MainWindow::GUIRespectLastTransferListChanged,
+                     this, &AppController::GUIRespectLastTransferListChanged);
+//    QObject::connect(mainwindow_, &MainWindow::GUIAppOptionsChanged,
+//                     this, [&]{ Serialize::ExportData(ec, config_, "data/config" ); });
+    QObject::connect(mainwindow_, &MainWindow::GUIAppOptionsChanged,
+                     this, &AppController::GUIAppOptionsChanged);
 }
 
+void AppController::GUIAppOptionsChanged(){
+    int ec = 0;
+    Serialize::ExportData(ec, config_, "data/config");
+}
 
-void AppController::SetupConfig(int &ec)
-{
+void AppController::GUIRespectLastTransferListChanged(const bool flag){
+    bool pls = flag;
+    config_.SetAvoidLastFileList(pls);
+}
+
+void AppController::SetupConfig(int &ec){
     source_dir_param_id_ = config_.AddParam(config_tokens_.at(0));
     target_dir_param_id_ = config_.AddParam(config_tokens_.at(1));
     config_.ReadConfig(ec);
 }
 
+void AppController::SetupDirectories(bool use_config){
 
-void AppController::SetupDirectories(bool use_config)
-{
     QObject::connect(&dirs_, &Directories::DirectoryChanged,
                      this, &AppController::DirectoryChanged);
     QObject::connect(&dirs_, &Directories::DriveForDirChanged,
@@ -53,35 +66,28 @@ void AppController::SetupDirectories(bool use_config)
     target_dir_id_ = dirs_.AddDirectory();
     std::string source_path, target_path;
 
-    if(use_config)
-    {
+    if(use_config){
         source_path = config_.GetParam(source_dir_param_id_);
         target_path = config_.GetParam(target_dir_param_id_);
     }
-    else
-    {
+    else{
         source_path = std::filesystem::current_path();
         target_path = std::filesystem::current_path();
     }
-//    dirs_.SetDirectoryPath(source_dir_id_, source_path);
-    dirs_.SetDirectoryPath(source_dir_id_, "/run/media/al/6238-6233/MUSIC/");
+    dirs_.SetDirectoryPath(source_dir_id_, source_path);
+//    dirs_.SetDirectoryPath(source_dir_id_, "/run/media/al/6238-6233/MUSIC/");
     dirs_.SetDirectoryPath(target_dir_id_, target_path);
 }
 
-
-void AppController::DirectoryChanged(const int dir_id)
-{
+void AppController::DirectoryChanged(const int dir_id){
     if(dir_id == source_dir_id_)
         mainwindow_->SetSourceLabel(dirs_.GetDirPath(dir_id));
     else if(dir_id == target_dir_id_)
         mainwindow_->SetTargetLabel(dirs_.GetDirPath(dir_id));
 }
 
-
-void AppController::DriveChanged(const int dir_id)
-{
-    if(dir_id == target_dir_id_)
-    {
+void AppController::DriveChanged(const int dir_id){
+    if(dir_id == target_dir_id_){
         float used = dirs_.GetDriveUsedSpace(dir_id);
         float free = dirs_.GetDriveFreeSpace(dir_id);
         mainwindow_->SetTargetUsedSpace(used);
@@ -89,30 +95,22 @@ void AppController::DriveChanged(const int dir_id)
     }
 }
 
-
-void AppController::GUISourceDirChanged(const std::string &dir)
-{
+void AppController::GUISourceDirChanged(const std::string &dir){
     dirs_.SetDirectoryPath(0, dir);
 }
 
-
-void AppController::GUITargetDirChanged(const std::string &dir)
-{
+void AppController::GUITargetDirChanged(const std::string &dir){
     dirs_.SetDirectoryPath(1, dir);
 }
 
-
-void AppController::GUIFillPercentOfFree(const QString &percent)
-{
+void AppController::GUIFillPercentOfFree(const QString &percent){
     float factor = percent.toFloat() / 100;
     float size = dirs_.GetDriveFreeSpace(target_dir_id_) * factor;
     mainwindow_->SetTargetFillSpace(size);
     filetransfer_.SetTransferSize(size);
 }
 
-
-void AppController::CreateCopylist()
-{
+void AppController::GUICreateCopylist(){
 //    /home/al/Documents/qt_test/
     mainwindow_->SetMainThreadBusy(true);
     mainwindow_->SetListStatusBarVisible(true);
@@ -121,28 +119,22 @@ void AppController::CreateCopylist()
     mainwindow_->SetListStatusBarValue(100);
 }
 
-
-void AppController::CopyList()
-{
+void AppController::GUICopyList(){
     mainwindow_->SetMainThreadBusy(true);
     mainwindow_->SetCopyStatusBarVisible(true);
     filetransfer_.TransferFiles(dirs_.GetDirPath(target_dir_id_));
     mainwindow_->SetMainThreadBusy(false);
     mainwindow_->SetCopyStatusBarValue(100);
     int ec;
-    Serialize::ExportData(ec, filetransfer_, last_filelist);
+    Serialize::ExportData(ec, filetransfer_, last_filelist_);
 }
 
-
-void AppController::ReceiveListStatus(const float &size)
-{
+void AppController::ReceiveListStatus(const float &size){
     int percent = (int)(size / filetransfer_.GetTransferSize() * 100);
     mainwindow_->SetListStatusBarValue(percent);
 }
 
-
-void AppController::ReceiveCopyStatus(const float &size)
-{
+void AppController::ReceiveCopyStatus(const float &size){
     int percent = (int)(size / filetransfer_.GetTransferSize() * 100);
     mainwindow_->SetCopyStatusBarValue(percent);
 }

@@ -3,12 +3,13 @@
 
 #pragma once
 #include <format.h>
-#include <serialize.h>
 #include <appoptions.h>
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QIntValidator>
 #include <iostream>
+
+#include <config.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,6 +33,7 @@ public:
     void SetListStatusBarValue(const int val);
     void SetCopyStatusBarVisible(const bool flag);
     void SetCopyStatusBarValue(const int val);
+    void OpenAppOptionsMenu(const Config::Data *config_data);
 
 signals:
     void GUICreateCopyList();
@@ -40,7 +42,7 @@ signals:
     void GUITargetDirChanged(const std::string dir);
     void GUIFillPercentOfFree(const QString percent);
     void GUIRespectLastTransferListChanged(const bool flag);
-    void GUIAppOptionsChanged();
+    void GUIOpenAppOptionsMenu();
 
 private:
     Ui::MainWindow *ui;
@@ -49,7 +51,5 @@ private:
     QString target_dir_;
 
     std::string DirectoryDialog(const QString &initial_dir);
-    void OpenAppOptionsMenu();
-    void SendOptionsFromGUItoModel();
 };
 #endif // MAINWINDOW_H

@@ -6,7 +6,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow){
 
     ui->setupUi(this);
-    //setup app options window and deserialize options
     this->ui->prog_bar_list->setVisible(false);
     this->ui->prog_bar_copy->setVisible(false);
 
@@ -21,12 +20,10 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(this->ui->edit_prc_fill_up, &QLineEdit::editingFinished,
                      this, [&]{ emit GUIFillPercentOfFree(this->ui->edit_prc_fill_up->text()); });
     QObject::connect(this->ui->act_app_options, &QAction::triggered,
-                     this, &MainWindow::OpenAppOptionsMenu);
+                     this, [&]{ emit GUIOpenAppOptionsMenu(); });
     QObject::connect(this->app_options_.ui->cb_respect_last_transfer, &QCheckBox::stateChanged,
                      this, [&]{ bool respect_last_transfer = this->app_options_.ui->cb_respect_last_transfer->isChecked();
                                 emit GUIRespectLastTransferListChanged(respect_last_transfer); });
-    QObject::connect(this->app_options_.ui->buttonBox, &QDialogButtonBox::accepted,
-                     this, [&]{ emit GUIAppOptionsChanged(); });
 
     QIntValidator val_int;
     this->ui->edit_prc_fill_up->setValidator(&val_int);
@@ -91,7 +88,9 @@ void MainWindow::SetCopyStatusBarValue(const int val){
     this->ui->prog_bar_copy->setValue(val);
 }
 
-void MainWindow::OpenAppOptionsMenu(){
+void MainWindow::OpenAppOptionsMenu(const Config::Data *config_data){
+
+    this->app_options_.ui->cb_respect_last_transfer->setChecked(config_data->avoid_last_file_list);
     app_options_.exec();
 }
 

@@ -32,11 +32,6 @@ int Directories::SetDrive(const std::string &path){
     return drives_.names.size() - 1;
 }
 
-
-
-
-
-
 std::string Directories::GetDirPath(const int dir_id){
     return dirs_.paths.at(dir_id);
 }
@@ -63,10 +58,10 @@ float Directories::GetDriveTotalSpace(const int dir_id){
 void Directories::PrintAllDrives(){
     for(unsigned int i = 0; i < drives_.names.size(); i++){
         std::cout << "Drive " << drives_.names.at(i).toStdString() << std::endl;
-        std::cout << "TiB total: " << Format::GetReadableBytes(drives_.sizes_total.at(i)) << std::endl;
-        std::cout << "TiB free: "  << Format::GetReadableBytes(drives_.sizes_free.at(i)) << std::endl;
-        std::cout << "GiB total: " << Format::GetReadableBytes(drives_.sizes_total.at(i)) << std::endl;
-        std::cout << "GiB free: "  << Format::GetReadableBytes(drives_.sizes_free.at(i)) << std::endl;
+        std::cout << "Size total: " << Format::GetReadableBytes(drives_.sizes_total.at(i)) << std::endl;
+        std::cout << "Size free: "  << Format::GetReadableBytes(drives_.sizes_free.at(i)) << std::endl;
+        std::cout << "Size total: " << Format::GetReadableBytes(drives_.sizes_total.at(i)) << std::endl;
+        std::cout << "Size free: "  << Format::GetReadableBytes(drives_.sizes_free.at(i)) << std::endl;
         std::cout << "__________"  << std::endl;
     }
 }

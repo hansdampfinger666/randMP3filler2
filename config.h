@@ -24,33 +24,32 @@ public:
       std::vector<std::string> values;
     } Params;
 
+    typedef struct{
+        bool avoid_last_file_list;
+    } Data;
+
     Config();
     int AddParam(const std::string &param_token);
     void ReadConfig(int &ec);
     const std::string GetParam(const int param_index);
+    const Data* GetConfig(){ return &data_; };
 
 
 private:
 
-    struct{
-        bool avoid_last_file_list = false;
-        bool pls = true;
-//        unsigned int pls;
-    } data_;
-
-
     const char file_name_lnx_[8] = "/config";
     std::string path_;
     Params params_;
+    Data data_ = { false };
 
     bool ValidateConfigLine(std::string &line);
     void Trim(std::string &str);
 
     friend class cereal::access;
     template<class Archive>
-    void save(Archive &ar) const { ar(data_); };
+    void save(Archive &ar) const { ar(data_.avoid_last_file_list); };
     template<class Archive>
-    void load(Archive &ar){ ar(data_); }
+    void load(Archive &ar){ ar(data_.avoid_last_file_list); }
 };
 
 #endif // CONFIG_H

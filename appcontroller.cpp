@@ -12,10 +12,8 @@ AppController::AppController(MainWindow *mainwindow){
     Serialize::ImportData(ec, filetransfer_, last_filelist_);
 }
 
-
 void AppController::SetupMainwindow(MainWindow *mainwindow){
 
-    int ec = 0;
     mainwindow_ = mainwindow;
     QObject::connect(mainwindow_, &MainWindow::GUICreateCopyList,
                      this, &AppController::GUICreateCopylist);
@@ -31,28 +29,28 @@ void AppController::SetupMainwindow(MainWindow *mainwindow){
                      this, &AppController::ReceiveListStatus);
     QObject::connect(&filetransfer_, &FileTransfer::ReportCopyStatus,
                      this, &AppController::ReceiveCopyStatus);
+    QObject::connect(mainwindow_, &MainWindow::GUIOpenAppOptionsMenu,
+                     this, [&]{ mainwindow_->OpenAppOptionsMenu(config_.GetConfig()); });
     QObject::connect(mainwindow_, &MainWindow::GUIRespectLastTransferListChanged,
                      this, &AppController::GUIRespectLastTransferListChanged);
-//    QObject::connect(mainwindow_, &MainWindow::GUIAppOptionsChanged,
-//                     this, [&]{ Serialize::ExportData(ec, config_, "data/config" ); });
-    QObject::connect(mainwindow_, &MainWindow::GUIAppOptionsChanged,
+    QObject::connect(mainwindow_, &MainWindow::GUIRespectLastTransferListChanged,
                      this, &AppController::GUIAppOptionsChanged);
 }
 
 void AppController::GUIAppOptionsChanged(){
     int ec = 0;
-    Serialize::ExportData(ec, config_, "data/config");
+    Serialize::ExportData(ec, config_, last_appsetup_);
 }
 
 void AppController::GUIRespectLastTransferListChanged(const bool flag){
-    bool pls = flag;
-    config_.SetAvoidLastFileList(pls);
+    config_.SetAvoidLastFileList(flag);
 }
 
 void AppController::SetupConfig(int &ec){
     source_dir_param_id_ = config_.AddParam(config_tokens_.at(0));
     target_dir_param_id_ = config_.AddParam(config_tokens_.at(1));
     config_.ReadConfig(ec);
+    Serialize::ImportData(ec, config_, last_appsetup_);
 }
 
 void AppController::SetupDirectories(bool use_config){
@@ -75,7 +73,6 @@ void AppController::SetupDirectories(bool use_config){
         target_path = std::filesystem::current_path();
     }
     dirs_.SetDirectoryPath(source_dir_id_, source_path);
-//    dirs_.SetDirectoryPath(source_dir_id_, "/run/media/al/6238-6233/MUSIC/");
     dirs_.SetDirectoryPath(target_dir_id_, target_path);
 }
 
@@ -111,7 +108,6 @@ void AppController::GUIFillPercentOfFree(const QString &percent){
 }
 
 void AppController::GUICreateCopylist(){
-//    /home/al/Documents/qt_test/
     mainwindow_->SetMainThreadBusy(true);
     mainwindow_->SetListStatusBarVisible(true);
     filetransfer_.SetCopyList(dirs_.GetDirPath(source_dir_id_), dirs_.GetDirPath(target_dir_id_), 3, false);

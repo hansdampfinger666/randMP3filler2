@@ -5,7 +5,6 @@ Config::Config(){
     path_ += file_name_lnx_;
 }
 
-
 void Config::SetAvoidLastFileList(const bool flag){
     data_.avoid_last_file_list = flag;
 }
@@ -15,7 +14,6 @@ int Config::AddParam(const std::string &param_token){
     params_.values.push_back("");
     return params_.tokens.size() - 1;
 }
-
 
 void Config::ReadConfig(int &ec){    
     if(not std::filesystem::exists(path_) or params_.tokens.size() == 0){
@@ -37,7 +35,6 @@ void Config::ReadConfig(int &ec){
     ec = Error::SetOkay();
 }
 
-
 bool Config::ValidateConfigLine(std::string &line){
     if(line.empty())
         return false;
@@ -49,14 +46,9 @@ bool Config::ValidateConfigLine(std::string &line){
     return true;
 }
 
-
 void Config::Trim(std::string &str){
     str = str.substr(str.find_first_not_of(" "), str.find_last_not_of(" ") + 1);
 }
-
-
-
-
 
 const std::string Config::GetParam(const int param_index){
     if(param_index > (int)params_.values.size())

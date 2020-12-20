@@ -1,5 +1,5 @@
-#ifndef FILES_H
-#define FILES_H
+#ifndef FILETRANSFER_H
+#define FILETRANSFER_H
 
 #pragma once
 #include <QObject>

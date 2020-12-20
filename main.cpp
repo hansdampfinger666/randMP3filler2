@@ -4,6 +4,10 @@
 #include <serialize.h>
 
 int main(int argc, char *argv[]){
+
+    std::cout << __VERSION__ << std::endl <<
+                 __cplusplus << std::endl;
+
     QApplication a(argc, argv);
     MainWindow w;
     w.show();

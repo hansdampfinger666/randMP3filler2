@@ -16,11 +16,6 @@
 class Serialize
 {
 public:
-    enum mode{
-        read = 1,
-        write = 1
-    };
-
     template<typename T>
     static void ExportData(int &ec, T &object, const std::string &filename){
         std::string path = std::filesystem::current_path() /= filename;
@@ -48,9 +43,6 @@ public:
         else
             ec = Error::Log(1, "Serialize", __func__, "File " + path + " for serialization could not be opened");
     };
-
-private:
-
 };
 
 #endif // SERIALIZE_H

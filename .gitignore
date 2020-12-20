@@ -1,2 +1,4 @@
 *.pro_user* 
+*.pro.user*
 *.pro_user
+*.pro.user

@@ -200,16 +200,6 @@ void FileTransfer::ResetTransferList(){
 }
 
 void FileTransfer::PrintTransferList(){
-//    for(unsigned long i = 0; i < folders_.paths.size(); i++)
-//        std::cout << "Folder: " << folders_.paths.at(i) << " / Size: " << Format::GetReadableBytes(folders_.sizes.at(i)) << std::endl <<
-//                    "root_name: " << std::filesystem::path(folders_.paths.at(i)).root_name() << std::endl <<
-//                    "root_directory: " << std::filesystem::path(folders_.paths.at(i)).root_directory() << std::endl <<
-//                    "root_path: " << std::filesystem::path(folders_.paths.at(i)).root_path() << std::endl <<
-//                    "relative_path: " << std::filesystem::path(folders_.paths.at(i)).relative_path() << std::endl <<
-//                    "parent_path: " << std::filesystem::path(folders_.paths.at(i)).parent_path() << std::endl <<
-//                    "file_name: " << std::filesystem::path(folders_.paths.at(i)).filename() << std::endl <<
-//                    "stem: " <<#pragma once
-// std::filesystem::path(folders_.paths.at(i)).stem() << std::endl;
     std::cout << "______________" << std::endl <<
                  "NUMBER DIRS TO COPY: " << folders_.qty << std::endl <<
                  "FILE DEPTH: " << file_depth_ << std::endl <<

@@ -4,6 +4,14 @@ void FileTransfer::SetCopyList(const std::string &source_path,
                                const std::string &target_path,
                                const int file_depth, const bool avoid_last_list){
 
+    // multi-threading seems pretty effective to parallelize idle times for
+    // I/O and transmission latency for server calls of std::filesystem
+    // if it's a remote filesystem (especially over wireless LAN or the net)
+    // optimal relation between thread count, bucket size
+    // tolerances and +- distribution, average source folder
+    // size, ratio between available source folders/target transfer size
+    // etc. has to be formalized to get consistently high performance
+
     source_path_ = source_path;
     target_path_ = target_path;
     avoid_last_list_ = avoid_last_list;
@@ -31,17 +39,17 @@ void FileTransfer::SetCopyList(const std::string &source_path,
     }
 
     int joined_threads = 0;
-    while(joined_threads < number_threads){
+    while(joined_threads < number_threads)
         for(auto thread : threads){
             if(thread->joinable()){
                 thread->join();
                 joined_threads++;
             }
         }
-    }
 
     auto end = std::chrono::steady_clock::now();
-    folders_.runtime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+    folders_.runtime = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                end - start).count();
 
     for(auto bucket : buckets){
         for(int i = 0; i < bucket->qty; i++){
@@ -63,8 +71,10 @@ void FileTransfer::SetCopyList(const std::string &source_path,
     }
     PrintTransferList();
     auto end_merge = std::chrono::steady_clock::now();
-    auto end_total = std::chrono::duration_cast<std::chrono::nanoseconds>(end_merge - end).count();
-    std::cout << "THREAD RESULT MERGE TIME: " << Format::GetReadableNanoSec(end_total) << std::endl;
+    auto end_total = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                end_merge - end).count();
+    std::cout << "THREAD RESULT MERGE TIME: "
+              << Format::GetReadableNanoSec(end_total) << std::endl;
 }
 
 void FileTransfer::FillBucketList(Folders *bucket, const float bucket_size,
@@ -82,6 +92,8 @@ void FileTransfer::FillBucketList(Folders *bucket, const float bucket_size,
 
     while(bucket->total_size < bucket_size - size_tolerance
           and iterations_without_change < (10 * (file_depth_ - 1))){
+        // this has to be fixed, comparison should be relation between
+        // work iterations and idle iterations (optimal relation TBD)
         // per 1 folder depth minus one there will be one idle run
 
         if(total_size_old == total_size_new)
@@ -108,7 +120,7 @@ void FileTransfer::FillBucketList(Folders *bucket, const float bucket_size,
            else
                subdir_id = randomizer.GetRandom(0, dir_qty - 1);
 
-            dir = GetSubPathNameByIndex(dir, subdir_id);
+           dir = GetSubPathNameByIndex(dir, subdir_id);
 
             if(dir != "" and i + 1 == file_depth_ - 1){
                 if(FolderExistsInTarget(dir)){
@@ -139,6 +151,7 @@ void FileTransfer::FillBucketList(Folders *bucket, const float bucket_size,
        }
     }
     bucket->iterations_without_size_chg = iterations_without_change;
+    // add per thread run time analysis for profiling
 //    auto end = std::chrono::steady_clock::now();
 //    bucket->runtime = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 }
@@ -289,7 +302,7 @@ void FileTransfer::PrintTransferList(){
                  "______________" << std::endl;
 }
 
-
+// single threaded solution for comparisons
 //void FileTransfer::SetCopyList(const std::string &source_path, const std::string &target_path,
 //                               const int file_depth, const bool avoid_last_list){
 

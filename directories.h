@@ -2,10 +2,7 @@
 #define DIRECTORY_H
 
 #pragma once
-#include <QObject>
-#include <QStorageInfo>
-#include <filesystem>
-#include <iostream>
+#include <x_pch.h>
 #include <format.h>
 
 

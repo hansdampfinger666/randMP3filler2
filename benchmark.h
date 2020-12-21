@@ -2,13 +2,8 @@
 #define BENCHMARK_H
 
 #pragma once
-#include <vector>
-#include <string>
-#include <chrono>
+#include <x_pch.h>
 #include <format.h>
-#include <iostream>
-#include <filesystem>
-#include <fstream>
 
 class Benchmark
 {

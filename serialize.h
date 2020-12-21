@@ -2,16 +2,11 @@
 #define SERIALIZE_H
 
 #pragma once
+#include <x_pch.h>
 #include <error.h>
 #include <config.h>
 #include <filetransfer.h>
-#include <filesystem>
 
-#include <cereal/archives/binary.hpp>
-#include <cereal/types/vector.hpp>
-#include <cereal/types/string.hpp>
-#include <cereal/access.hpp>
-#include <fstream>
 
 class Serialize
 {
@@ -33,6 +28,8 @@ public:
     template<typename T>
     static void ImportData(int &ec, T &object, const std::string &filename){
         std::string path = std::filesystem::current_path() /= filename;
+        if(not std::filesystem::exists(path))
+            return;
         std::ifstream ifs(path);
 
         if(ifs.is_open()){

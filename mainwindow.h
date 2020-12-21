@@ -4,12 +4,8 @@
 #pragma once
 #include <format.h>
 #include <appoptions.h>
-#include <QMainWindow>
-#include <QFileDialog>
-#include <QIntValidator>
-#include <iostream>
-
 #include <config.h>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

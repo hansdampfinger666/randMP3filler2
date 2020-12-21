@@ -2,15 +2,14 @@
 #define APPCONTROLLER_H
 
 #pragma once
-#include <QObject>
-#include <QtGui>
+#include <x_pch.h>
+
 #include <mainwindow.h>
 #include <config.h>
 #include <directories.h>
 #include <filetransfer.h>
 #include <serialize.h>
 #include <format.h>
-#include <iostream>
 
 
 class AppController : public QObject

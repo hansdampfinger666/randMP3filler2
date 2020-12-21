@@ -15,7 +15,7 @@ int Config::AddParam(const std::string &param_token){
     return params_.tokens.size() - 1;
 }
 
-void Config::ReadConfig(int &ec){    
+void Config::ReadConfig(int &ec){
     if(not std::filesystem::exists(path_) or params_.tokens.size() == 0){
         ec = Error::Log(1, typeid(this).name(), __func__, "Config file does not exist or no parameter tokens were defined");
         return;

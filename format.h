@@ -2,8 +2,7 @@
 #define FORMAT_H
 
 #pragma once
-#include <string>
-#include <sstream>
+#include <x_pch.h>
 
 class Format
 {

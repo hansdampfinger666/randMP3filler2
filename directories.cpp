@@ -8,7 +8,7 @@ int Directories::AddDirectory(){
 }
 
 bool Directories::SetDirectoryPath(const int id, const std::string &path){
-    if(id > (int)dirs_.paths.size() or id < 0 or !std::filesystem::exists(path) or not std::filesystem::is_directory(path))
+    if(id > (int)dirs_.paths.size() or id < 0 or not std::filesystem::exists(path) or not std::filesystem::is_directory(path))
         return false;
     dirs_.paths.at(id) = path;
     dirs_.drive_ids.at(id) = SetDrive(path);

@@ -2,16 +2,10 @@
 #define FILETRANSFER_H
 
 #pragma once
-#include <QObject>
+#include <x_pch.h>
 #include <format.h>
-#include <filesystem>
-#include <iostream>
-#include <random.h>
-#include <vector>
-#include <chrono>
-#include <cereal/access.hpp>
-
 #include <benchmark.h>
+#include <random.h>
 
 
 class FileTransfer : public QObject
@@ -47,20 +41,31 @@ private:
     Folders folders_ { 0, 0, 0, 0, 0, 0, 0, 0, {}, {} };
     Random *randomizer_ = nullptr;
     float copy_size_ = 0;
-    int file_depth_ = 1;    //built for minimum file depth of 2: root=0/folder_depth=1/file_depth=2
+    int file_depth_ = 1;    //built for minimum file depth of 2:
+                           // root=0/folder_depth=1/file_depth=2
+    std::string source_path_, target_path_;
+    bool avoid_last_list_;
     std::vector<std::string> existing_target_folders_ {};
     std::vector<std::string> last_transfer_list_ {};
 
     std::vector<std::string> GetExistingFolders(const std::string &path);
     bool FolderExistsInTarget(const std::string &path);
-    std::vector<std::string> DrillUpPath(const std::string &path, const int drill_up_depth);
+    std::vector<std::string> DrillUpPath(const std::string &path,
+                                         const int drill_up_depth);
     int CountSubfolders(const std::string &path);
     std::string GetSubPathNameByIndex(const std::string &root_path, const int id);
     std::vector<std::string> GetAllSubPathNames(const std::vector<std::string> &paths);
     float GetFileSizesInFolder(const std::string &path);
     bool FolderContainsFiles(const std::string &path);
-    bool IsDuplicateFolder(const std::string &path, const std::vector<std::string> &comparison_list);
+    bool IsDuplicateFolder(const std::string &path,
+                           const std::vector<std::string> &comparison_list);
     void PrintTransferList();
+
+    void FillBucketList(Folders *bucket,
+                        const float bucket_size, const float size_tolerance,
+                        const int top_dir_qty,
+                        const std::string &source_path,
+                        const bool avoid_last_list);
 
     friend class cereal::access;
     template<class Archive>

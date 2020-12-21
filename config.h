@@ -2,14 +2,7 @@
 #define CONFIG_H
 
 #pragma once
-#include <QObject>
-#include <QDir>
-#include <vector>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
 #include <error.h>
-#include <cereal/access.hpp>
 
 
 class Config : public QObject

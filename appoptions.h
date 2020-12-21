@@ -2,9 +2,9 @@
 #define APPOPTIONS_H
 
 #pragma once
+#include <x_pch.h>
 #include "ui_appoptions.h"
-#include <QDialog>
-#include <QCheckBox>
+
 
 namespace Ui {
 class AppOptions;

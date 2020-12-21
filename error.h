@@ -2,9 +2,7 @@
 #define ERROR_H
 
 #pragma once
-#include <string>
-#include <iostream>
-#include <typeinfo>
+#include <x_pch.h>
 
 class Error
 {

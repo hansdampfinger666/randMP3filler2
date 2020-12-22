@@ -14,9 +14,11 @@ public:
         std::string message;
     } Data;
 
-    static int Log(const int code, const std::string &caller, const std::string &method, const std::string &message);
+    static int Log(const int code, const std::string &caller,
+                   const std::string &method, const std::string &message);
     static int SetOkay();
-    static void SetVerboseLogging(const bool flag){ verbose_logging_active_ = flag; };
+    static void SetVerboseLogging(const bool flag){
+        verbose_logging_active_ = flag; };
     static void OutputLast();
 
 private:

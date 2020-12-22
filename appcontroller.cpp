@@ -31,10 +31,13 @@ void AppController::SetupMainwindow(MainWindow *mainwindow){
     QObject::connect(&filetransfer_, &FileTransfer::ReportCopyStatus,
                      this, &AppController::ReceiveCopyStatus);
     QObject::connect(mainwindow_, &MainWindow::GUIOpenAppOptionsMenu,
-                     this, [&]{ mainwindow_->OpenAppOptionsMenu(config_.GetConfig()); });
-    QObject::connect(mainwindow_, &MainWindow::GUIRespectLastTransferListChanged,
+                     this, [&]{ mainwindow_->OpenAppOptionsMenu(
+                    config_.GetConfig()); });
+    QObject::connect(mainwindow_,
+                     &MainWindow::GUIRespectLastTransferListChanged,
                      this, &AppController::GUIRespectLastTransferListChanged);
-    QObject::connect(mainwindow_, &MainWindow::GUIRespectLastTransferListChanged,
+    QObject::connect(mainwindow_,
+                     &MainWindow::GUIRespectLastTransferListChanged,
                      this, &AppController::GUIAppOptionsChanged);
 }
 
@@ -111,7 +114,8 @@ void AppController::GUIFillPercentOfFree(const QString &percent){
 void AppController::GUICreateCopylist(){
     mainwindow_->SetMainThreadBusy(true);
     mainwindow_->SetListStatusBarVisible(true);
-    filetransfer_.SetCopyList(dirs_.GetDirPath(source_dir_id_), dirs_.GetDirPath(target_dir_id_), 3, false);
+    filetransfer_.SetCopyList(dirs_.GetDirPath(source_dir_id_),
+                              dirs_.GetDirPath(target_dir_id_), 3, false);
     mainwindow_->SetMainThreadBusy(false);
     mainwindow_->SetListStatusBarValue(100);
 }

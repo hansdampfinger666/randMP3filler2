@@ -6,6 +6,7 @@
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/vector.hpp>
+#include <algorithm>
 #include <chrono>
 #include <filesystem>
 #include <fstream>

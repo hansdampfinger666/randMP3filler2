@@ -13,17 +13,26 @@ MainWindow::MainWindow(QWidget *parent)
                      this, [&]{ emit GUICreateCopyList(); });
     QObject::connect(this->ui->pb_copy_list, &QPushButton::clicked,
                      this, [&]{ emit GUICopyList(); });
-    QObject::connect(this->ui->pb_chg_source_dir, &QPushButton::clicked,
-                     this, [&]{ emit GUISourceDirChanged(DirectoryDialog(source_dir_)); });
+    QObject::connect(
+                this->ui->pb_chg_source_dir, &QPushButton::clicked,
+                this, [&]{
+        emit GUISourceDirChanged(DirectoryDialog(source_dir_)); });
     QObject::connect(this->ui->pb_chg_target_dir, &QPushButton::clicked,
-                     this, [&]{ emit GUITargetDirChanged(DirectoryDialog(target_dir_)); });
+                     this, [&]{
+        emit GUITargetDirChanged(DirectoryDialog(target_dir_)); });
     QObject::connect(this->ui->edit_prc_fill_up, &QLineEdit::editingFinished,
-                     this, [&]{ emit GUIFillPercentOfFree(this->ui->edit_prc_fill_up->text()); });
+                     this, [&]{
+        emit GUIFillPercentOfFree(this->ui->edit_prc_fill_up->text()); });
     QObject::connect(this->ui->act_app_options, &QAction::triggered,
-                     this, [&]{ emit GUIOpenAppOptionsMenu(); });
-    QObject::connect(this->app_options_.ui->cb_respect_last_transfer, &QCheckBox::stateChanged,
-                     this, [&]{ bool respect_last_transfer = this->app_options_.ui->cb_respect_last_transfer->isChecked();
-                                emit GUIRespectLastTransferListChanged(respect_last_transfer); });
+                     this, [&]{
+        emit GUIOpenAppOptionsMenu(); });
+    QObject::connect(this->app_options_.ui->cb_respect_last_transfer,
+                     &QCheckBox::stateChanged,
+                     this, [&]{
+        bool respect_last_transfer =
+                this->app_options_.ui->cb_respect_last_transfer->isChecked();
+
+        emit GUIRespectLastTransferListChanged(respect_last_transfer); });
 
     QIntValidator val_int;
     this->ui->edit_prc_fill_up->setValidator(&val_int);
@@ -90,7 +99,8 @@ void MainWindow::SetCopyStatusBarValue(const int val){
 
 void MainWindow::OpenAppOptionsMenu(const Config::Data *config_data){
 
-    this->app_options_.ui->cb_respect_last_transfer->setChecked(config_data->avoid_last_file_list);
+    this->app_options_.ui->cb_respect_last_transfer->setChecked(
+                config_data->avoid_last_file_list);
     app_options_.exec();
 }
 

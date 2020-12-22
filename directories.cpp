@@ -7,8 +7,11 @@ int Directories::AddDirectory(){
     return dirs_.paths.size() - 1;
 }
 
-bool Directories::SetDirectoryPath(const int id, const std::string &path){
-    if(id > (int)dirs_.paths.size() or id < 0 or not std::filesystem::exists(path) or not std::filesystem::is_directory(path))
+bool Directories::SetDirectoryPath(const int id,
+                                   const std::string &path){
+    if(id > (int)dirs_.paths.size() or id < 0
+            or not std::filesystem::exists(path)
+            or not std::filesystem::is_directory(path))
         return false;
     dirs_.paths.at(id) = path;
     dirs_.drive_ids.at(id) = SetDrive(path);
@@ -57,11 +60,20 @@ float Directories::GetDriveTotalSpace(const int dir_id){
 
 void Directories::PrintAllDrives(){
     for(unsigned int i = 0; i < drives_.names.size(); i++){
-        std::cout << "Drive " << drives_.names.at(i).toStdString() << std::endl;
-        std::cout << "Size total: " << Format::GetReadableBytes(drives_.sizes_total.at(i)) << std::endl;
-        std::cout << "Size free: "  << Format::GetReadableBytes(drives_.sizes_free.at(i)) << std::endl;
-        std::cout << "Size total: " << Format::GetReadableBytes(drives_.sizes_total.at(i)) << std::endl;
-        std::cout << "Size free: "  << Format::GetReadableBytes(drives_.sizes_free.at(i)) << std::endl;
+        std::cout << "Drive " << drives_.names.at(i).toStdString() <<
+                     std::endl;
+        std::cout << "Size total: " <<
+                     Format::GetReadableBytes(drives_.sizes_total.at(i)) <<
+                     std::endl;
+        std::cout << "Size free: "  <<
+                     Format::GetReadableBytes(drives_.sizes_free.at(i)) <<
+                     std::endl;
+        std::cout << "Size total: " <<
+                     Format::GetReadableBytes(drives_.sizes_total.at(i)) <<
+                     std::endl;
+        std::cout << "Size free: "  <<
+                     Format::GetReadableBytes(drives_.sizes_free.at(i)) <<
+                     std::endl;
         std::cout << "__________"  << std::endl;
     }
 }

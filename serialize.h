@@ -22,7 +22,8 @@ public:
             ofs.close();
         }
         else
-            ec = Error::Log(2, "Serialize", __func__, "File " + path + " for deserialization could not be opened");
+            ec = Error::Log(2, "Serialize", __func__, "File " + path +
+                            " for deserialization could not be opened");
     };
 
     template<typename T>
@@ -38,7 +39,8 @@ public:
             ifs.close();
         }
         else
-            ec = Error::Log(1, "Serialize", __func__, "File " + path + " for serialization could not be opened");
+            ec = Error::Log(1, "Serialize", __func__, "File " + path +
+                            " for serialization could not be opened");
     };
 };
 

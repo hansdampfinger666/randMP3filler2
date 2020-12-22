@@ -44,10 +44,12 @@ private:
     int target_dir_id_;
     int source_drive_id_;
     int target_drive_id_;
-    const std::vector<std::string> config_tokens_ { "default_source_dir = ", "default_target_dir = " };
+    const std::vector<std::string> config_tokens_ { "default_source_dir = ",
+                                                    "default_target_dir = " };
     const std::string last_filelist_ = "last_filelist";
     const std::string last_appsetup_ = "last_appsetup";
-    const std::string ser_config_name_ = (std::string)"data/" + typeid(config_).name();
+    const std::string ser_config_name_ = (std::string)"data/" +
+            typeid(config_).name();
 
     void SetupMainwindow(MainWindow *mainwindow);
     void SetupConfig(int &ec);

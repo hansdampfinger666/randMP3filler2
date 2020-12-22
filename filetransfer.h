@@ -13,13 +13,14 @@ class FileTransfer : public QObject
     Q_OBJECT
 
 public:
-    typedef struct {
-        int qty;
+    typedef struct{
+        int dir_qty;
         int duplicate_hits;
         int last_list_duplicate_hits;
         int exists_in_target_hits;
         int iterations;
         int iterations_without_size_chg;
+        float copy_size;
         float total_size;
         float total_runtime;
         int thread_qty;
@@ -42,6 +43,8 @@ public:
         std::vector<float> sizes;
     } Bucket;
 
+    float GetDirAttributeSamples(const std::string &source_path,
+                              const int file_depth);
     void SetTransferSize(const float size){ copy_size_ = size; };
     void SetCopyList(const std::string &source_path,
                      const std::string &target_path,
@@ -55,7 +58,9 @@ signals:
     void ReportCopyStatus(const float size);
 
 private:
-    Folders folders_ { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {}, {} };
+    // DATA
+    Folders folders_ {};
+//    Folders folders_ { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {}, {} };
     Random *randomizer_ = nullptr;
     float copy_size_ = 0;
     int file_depth_ = 1;    //built for minimum file depth of 2:
@@ -65,6 +70,13 @@ private:
     std::vector<std::string> existing_target_folders_ {};
     std::vector<std::string> last_transfer_list_ {};
 
+    // FUNCTIONS
+    void FillBucketList(Bucket *bucket,
+                        std::atomic<float>* data_processed,
+                        const float bucket_size,
+                        const int top_dir_qty,
+                        const std::string &source_path,
+                        const bool avoid_last_list);
     std::vector<std::string> GetExistingFolders(const std::string &path);
     bool FolderExistsInTarget(const std::string &path);
     std::vector<std::string> DrillUpPath(const std::string &path,
@@ -80,12 +92,7 @@ private:
                            const std::vector<std::string> &comparison_list);
     void PrintTransferList();
 
-    void FillBucketList(Bucket *bucket,
-                        const float bucket_size, const float size_tolerance,
-                        const int top_dir_qty,
-                        const std::string &source_path,
-                        const bool avoid_last_list);
-
+    // SERIALIZATION
     friend class cereal::access;
     template<class Archive>
     void save(Archive &ar) const { ar(folders_.paths); };

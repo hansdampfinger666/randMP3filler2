@@ -4,28 +4,7 @@ void FileTransfer::SetCopyList(const std::string &source_path,
                                const std::string &target_path,
                                const int file_depth,
                                const bool avoid_last_list){
-
-    // multi-threading seems pretty effective to parallelize idle times for
-    // I/O or transmission latency for server calls of std::filesystem
-    // especially if it's a remote filesystem (over wireless LAN or the net):
-    // optimal relation between thread count, bucket size
-    // tolerances and +- distribution, average source folder
-    // size, ratio between available source folders/target transfer size
-    // etc. has to be formalized to get consistently high performance
-    // the primary thing to reduce is iterations without size changes (i.e.
-    // idle std::filesystem queries, without a folder hit)
-    // because trying to repeatedly get better data sets from the server/disk is
-    // painfully slow, just get more than we need and stop, then discard it
-    // afterwards if not needed and sifting through data we already have on the
-    // local machine is very fast
-    // TODO: get random samples for unkown source folders, to gauge avg.
-    //      folder size
-    //  optimize threading options with that information
-    //  remember known source folder attributes and serialize as part of the
-    // application options
-    //  this makes sense for common use cases, maybe add option to reanalyze
-    // source folder manually
-
+    emit ReportListStatus(0);
     source_path_ = source_path;
     target_path_ = target_path;
     file_depth_ = file_depth;
@@ -34,37 +13,39 @@ void FileTransfer::SetCopyList(const std::string &source_path,
     int top_dir_qty = CountSubfolders(source_path);
     existing_target_folders_ = GetExistingFolders(target_path);
 
-    // formalize these params
-    // GetRandomFolderSample()
-    int number_threads = 32;
-    float bucket_size = copy_size_ / number_threads;
-    float size_tolerance = 200000000;
-    folders_.thread_qty = number_threads;
+    float avg_folder_size = GetDirAttributeSamples(source_path, file_depth);
+    std::cout << Format::GetReadableBytes(avg_folder_size) << std::endl;
+    folders_.thread_qty = 64;
+    float bucket_size = copy_size_ / folders_.thread_qty;
 
-    std::vector<std::jthread*> threads(number_threads);
-    std::vector<Bucket*> buckets(number_threads);
+    std::vector<std::jthread*> threads(folders_.thread_qty);
+    std::vector<Bucket*> buckets(folders_.thread_qty);
+    std::vector<std::atomic<float>*> data_processed(folders_.thread_qty);
 
     auto start = std::chrono::steady_clock::now();
 
-    for(int i = 0; i < number_threads; i++){
+    for(int i = 0; i < folders_.thread_qty; i++){
         buckets.at(i) = new Bucket { 0, 0, 0, 0, 0, 0, 0, 0, {}, {} };
+        data_processed.at(i) = new std::atomic<float>;
         threads.at(i) = new std::jthread(&FileTransfer::FillBucketList, this,
-                                         buckets.at(i), bucket_size,
-                                         size_tolerance,
+                                         buckets.at(i), data_processed.at(i),
+                                         bucket_size,
                                          top_dir_qty, source_path_,
                                          avoid_last_list_);
     }
-
     int joined_threads = 0;
-    while(joined_threads < number_threads)
-        for(int thread_index = 0;
-            thread_index < number_threads; thread_index++){
-            if(threads.at(thread_index)->joinable()){
-                threads.at(thread_index)->join();
+    float data_progress = 0;
+    while(joined_threads < folders_.thread_qty){
+        data_progress = 0;
+        for(int i = 0; i < folders_.thread_qty; i++){
+            data_progress += *data_processed.at(i);
+            emit ReportListStatus(data_progress);
+            if(threads.at(i)->joinable()){
+                threads.at(i)->join();
                 joined_threads++;
             }
         }
-
+    }
     auto end = std::chrono::steady_clock::now();
     folders_.total_runtime = std::chrono::duration_cast<
             std::chrono::nanoseconds>(
@@ -75,7 +56,7 @@ void FileTransfer::SetCopyList(const std::string &source_path,
             if(folders_.total_size + bucket->sizes.at(i) > copy_size_)
                 continue;
             if(not IsDuplicateFolder(bucket->paths.at(i), folders_.paths)){
-                folders_.qty++;
+                folders_.dir_qty++;
                 folders_.paths.push_back(bucket->paths.at(i));
                 folders_.sizes.push_back(bucket->sizes.at(i));
                 folders_.total_size += bucket->sizes.at(i);
@@ -89,7 +70,7 @@ void FileTransfer::SetCopyList(const std::string &source_path,
                 bucket->iterations_without_size_chg;
         folders_.avg_thread_runtime += bucket->thread_runtime;
     }
-    folders_.avg_thread_runtime /= number_threads;
+    folders_.avg_thread_runtime /= folders_.thread_qty;
 
     auto end_merge = std::chrono::steady_clock::now();
     auto end_total = std::chrono::duration_cast<std::chrono::nanoseconds>(
@@ -104,8 +85,9 @@ void FileTransfer::SetCopyList(const std::string &source_path,
         delete thread;
 }
 
-void FileTransfer::FillBucketList(Bucket *bucket, const float bucket_size,
-                                  const float size_tolerance,
+void FileTransfer::FillBucketList(Bucket *bucket,
+                                  std::atomic<float> *data_processed,
+                                  const float bucket_size,
                                   const int top_dir_qty,
                                   const std::string &source_path,
                                   const bool avoid_last_list){
@@ -116,7 +98,7 @@ void FileTransfer::FillBucketList(Bucket *bucket, const float bucket_size,
     float total_size_old = 0, total_size_new = 0;
     bucket->iterations_without_size_chg = -1;
 
-    while(bucket->total_size < bucket_size + size_tolerance){
+    while(bucket->total_size < bucket_size){
 
         if(total_size_old == total_size_new)
             bucket->iterations_without_size_chg++;
@@ -129,7 +111,6 @@ void FileTransfer::FillBucketList(Bucket *bucket, const float bucket_size,
 
         for(int i = 0; i < file_depth_ - 1; i++){
             int subdir_id;
-
             dir_qty = (dir == source_path) ? top_dir_qty : CountSubfolders(dir);
 
             if(dir_qty == 0)
@@ -155,7 +136,6 @@ void FileTransfer::FillBucketList(Bucket *bucket, const float bucket_size,
                 bucket->last_list_duplicate_hits++;
                 break;
             }
-
             float folder_size = GetFileSizesInFolder(dir);
 
             if(folder_size > 0 and FolderContainsFiles(dir)){
@@ -164,6 +144,7 @@ void FileTransfer::FillBucketList(Bucket *bucket, const float bucket_size,
                 bucket->paths.push_back(dir);
                 bucket->sizes.push_back(folder_size);
                 total_size_new = bucket->total_size;
+                *data_processed = total_size_new;
             }
         }
     }
@@ -171,6 +152,43 @@ void FileTransfer::FillBucketList(Bucket *bucket, const float bucket_size,
     bucket->thread_runtime = std::chrono::duration_cast<
             std::chrono::nanoseconds>(
                 end - start).count();
+}
+
+float FileTransfer::GetDirAttributeSamples(const std::string &source_path,
+                                           const int file_depth){
+    source_path_ = source_path;
+    file_depth_ = file_depth;
+
+    int sample_size = 15;
+    int sample_counter = 0;
+    float folder_sizes = 0;
+    int top_dir_qty = CountSubfolders(source_path);
+
+    while(sample_counter < sample_size){
+        std::string dir = source_path;
+        int dir_qty = 0;
+
+        for(int i = 0; i < file_depth_ - 1; i++){
+            dir_qty = (dir == source_path) ? top_dir_qty : CountSubfolders(dir);
+
+            if(dir_qty == 0)
+                break;
+
+            int subdir_id = (i == 0) ? sample_counter : 0;
+
+            dir = GetSubPathNameByIndex(dir, subdir_id);
+
+            if(i + 1 != file_depth_ - 1)
+                continue;
+
+            float folder_size = GetFileSizesInFolder(dir);
+            if(folder_size > 0 and FolderContainsFiles(dir)){
+                folder_sizes += folder_size;
+                sample_counter++;
+            }
+        }
+    }
+    return folder_sizes / sample_size;
 }
 
 std::vector<std::string> FileTransfer::GetExistingFolders(
@@ -232,16 +250,16 @@ int FileTransfer::CountSubfolders(const std::string &path){
     return subfolders;
 }
 
-std::string FileTransfer::GetSubPathNameByIndex(const std::string &root_path,
+std::string FileTransfer::GetSubPathNameByIndex(const std::string &path,
                                                 const int id){
-    if(not std::filesystem::is_directory(root_path))
+    if(not std::filesystem::is_directory(path))
         return "";
 
     int i = 0;
-    for(auto &path : std::filesystem::directory_iterator(root_path)){
-        if(path.is_directory())
+    for(auto &subpath : std::filesystem::directory_iterator(path)){
+        if(subpath.is_directory())
             if(i == id)
-                return path.path();
+                return subpath.path();
         i++;
     }
     return "";
@@ -282,6 +300,7 @@ void FileTransfer::TransferFiles(const std::string &target_path){
     std::vector<std::filesystem::path> folder_struct (file_depth_ - 1);
     int copied_size = 0;
     int index = 0;
+    emit ReportCopyStatus(0);
 
     for(auto &folder : folders_.paths){
         auto path = std::filesystem::path(folder);
@@ -291,8 +310,8 @@ void FileTransfer::TransferFiles(const std::string &target_path){
             path = path.parent_path();
             folder_struct.at(i) = path;
         }
-
         std::filesystem::path target_folder = target_path;
+
         for(int i = folder_struct.size() - 1; i >= 0 ; i--)
             target_folder /= folder_struct.at(i).filename();
 
@@ -305,14 +324,14 @@ void FileTransfer::TransferFiles(const std::string &target_path){
 }
 
 void FileTransfer::ResetTransferList(){
-    folders_ = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {}, {} };
+    folders_ = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {}, {} };
 }
 
 void FileTransfer::PrintTransferList(){
     std::cout << "______________"
               << std::endl <<
                  "NUMBER DIRS TO COPY: "
-              << folders_.qty << std::endl <<
+              << folders_.dir_qty << std::endl <<
                  "FILE DEPTH: "
               << file_depth_ << std::endl <<
                  "TOTAL SIZE: "

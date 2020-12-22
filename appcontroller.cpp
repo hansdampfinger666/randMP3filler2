@@ -10,7 +10,6 @@ AppController::AppController(MainWindow *mainwindow){
     else
         SetupDirectories(true);
     Serialize::ImportData(ec, filetransfer_, last_filelist_);
-
 }
 
 void AppController::SetupMainwindow(MainWindow *mainwindow){

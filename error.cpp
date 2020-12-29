@@ -26,5 +26,5 @@ void Error::OutputLast(){
     std::cout << "Error code: " << data_.code << " thrown by class: " <<
                  data_.class_name <<
               " in method: " << data_.method_name << " with message : " <<
-                 data_.message << std::endl;
+                 data_.message << "\n";
 };

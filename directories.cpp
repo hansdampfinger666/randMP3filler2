@@ -61,19 +61,19 @@ float Directories::GetDriveTotalSpace(const int dir_id){
 void Directories::PrintAllDrives(){
     for(unsigned int i = 0; i < drives_.names.size(); i++){
         std::cout << "Drive " << drives_.names.at(i).toStdString() <<
-                     std::endl;
+                     "\n";
         std::cout << "Size total: " <<
                      Format::GetReadableBytes(drives_.sizes_total.at(i)) <<
-                     std::endl;
+                     "\n";
         std::cout << "Size free: "  <<
                      Format::GetReadableBytes(drives_.sizes_free.at(i)) <<
-                     std::endl;
+                     "\n";
         std::cout << "Size total: " <<
                      Format::GetReadableBytes(drives_.sizes_total.at(i)) <<
-                     std::endl;
+                     "\n";
         std::cout << "Size free: "  <<
                      Format::GetReadableBytes(drives_.sizes_free.at(i)) <<
-                     std::endl;
-        std::cout << "__________"  << std::endl;
+                     "\n";
+        std::cout << "__________\n";
     }
 }

@@ -14,9 +14,11 @@ void FileTransfer::SetCopyList(const std::string &source_path,
     existing_target_folders_ = GetExistingFolders(target_path);
 
     float avg_folder_size = GetDirAttributeSamples(source_path, file_depth);
-    std::cout << Format::GetReadableBytes(avg_folder_size) << std::endl;
+    std::cout << Format::GetReadableBytes(avg_folder_size) << "\n";
     folders_.thread_qty = 64;
     float bucket_size = copy_size_ / folders_.thread_qty;
+    // reserve copy_size_ / avg_folder_size in spaces in folders_.paths
+    // and folders_.sizes
 
     std::vector<std::jthread*> threads(folders_.thread_qty);
     std::vector<Bucket*> buckets(folders_.thread_qty);
@@ -329,34 +331,34 @@ void FileTransfer::ResetTransferList(){
 
 void FileTransfer::PrintTransferList(){
     std::cout << "______________"
-              << std::endl <<
+              << "\n" <<
                  "NUMBER DIRS TO COPY: "
-              << folders_.dir_qty << std::endl <<
+              << folders_.dir_qty << "\n" <<
                  "FILE DEPTH: "
-              << file_depth_ << std::endl <<
+              << file_depth_ << "\n" <<
                  "TOTAL SIZE: "
-              << Format::GetReadableBytes(folders_.total_size) << std::endl <<
+              << Format::GetReadableBytes(folders_.total_size) << "\n" <<
                  "DUPLIACTE HITS: "
-              << folders_.duplicate_hits << std::endl <<
+              << folders_.duplicate_hits << "\n" <<
                  "ALREADY IN TARGET HITS: "
-              << folders_.exists_in_target_hits << std::endl <<
+              << folders_.exists_in_target_hits << "\n" <<
                  "ITERATIONS: "
-              << folders_.iterations << std::endl <<
+              << folders_.iterations << "\n" <<
                  "ITERATIONS WITHOUT SIZE CHANGE: "
-              << folders_.iterations_without_size_chg << std::endl <<
+              << folders_.iterations_without_size_chg << "\n" <<
                  "NUMBER OF THREADS: "
-              << folders_.thread_qty << std::endl <<
+              << folders_.thread_qty << "\n" <<
                  "AVG THREAD RUNTIME: "
               << Format::GetReadableNanoSec(folders_.avg_thread_runtime) <<
-                 std::endl <<
+                 "\n" <<
                  "______________"
-              << std::endl <<
+              << "\n" <<
                  "THREAD MERGE TIME: "
               << Format::GetReadableNanoSec(folders_.thread_merge_runtime) <<
-                 std::endl <<
+                 "\n" <<
                  "TOTAL EXECUTION TIME: "
               << Format::GetReadableNanoSec(folders_.total_runtime) <<
-                 std::endl;
+                 "\n";
 }
 
 // single threaded solution for comparisons

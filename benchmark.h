@@ -95,11 +95,11 @@ private:
                          Format::GetReadableNanoSec(
                              data_.total_runtimes.at(i)) <<
                          " Percentage of total: " <<
-                         data_.percentages_of_total.at(i) << "%" << std::endl;
-        std::cout << "---------------------------" << std::endl <<
+                         data_.percentages_of_total.at(i) << "%\n";
+        std::cout << "---------------------------\n" <<
                      "TOTAL RUNTIME: " <<
                      Format::GetReadableNanoSec(data_.benchmark_runtime) <<
-                     std::endl;
+                     "\n";
     }
 
     static void SetBenchmarkTotals(){
@@ -113,7 +113,7 @@ private:
                 "benchmark_" + data_.benchmark_name;
         std::ofstream ofs(path, std::ofstream::app);
         if(ofs.is_open())
-            ofs << data_.benchmark_runtime << std::endl;
+            ofs << data_.benchmark_runtime << "\n";
     }
 };
 
